@@ -1,0 +1,108 @@
+        .heading1 {
+            font-size: 30px;
+            color: #ffffff;
+        }
+
+        .text1 {
+            font-size: 20px;
+            color: #ffffff;
+        }
+        .message {
+            padding: 10px;
+            margin: 5px;
+            background-color: #f3f3f3
+        }
+        nav a {
+            color: #d64161;
+            font-size: 2em;
+            margin-left: 50px;
+            text-decoration: none;
+        }
+        .badalert {
+            padding: 20px;
+            margin: 5px;
+            color: #970020;
+            background-color: #ffd5de;
+        }
+        .goodalert {
+            padding: 20px;
+            margin: 5px;
+            color: #26ff00;
+            background-color: #e0ffd5;
+        }
+        .button1 {
+        background-color: #dd00ff; /* Green */
+        border: none;
+        color: white;
+        padding: 8px 32px;
+        text-align: center;
+        text-decoration: none;
+        display: inline-block;
+        font-size: 16px;
+        border-radius: 12px;
+            transition-duration: 0.4s;
+        }
+
+        .button2 {
+        background-color: #dcdcdc; /* Green */
+        border: none;
+        color: #000000;
+        padding: 8px 32px;
+        text-align: center;
+        text-decoration: none;
+        display: inline-block;
+        font-size: 16px;
+        border-radius: 12px;
+            transition-duration: 0.4s;
+        }
+
+        .button1:hover {
+        background-color: #ff8900; /* Green */
+        color: white;
+        }
+        .button2:hover {
+        background-color: #78ff00; /* Green */
+        color: white;
+        }
+
+        .button3 {
+         background-color: #6b747c; /* Green */
+        border: none;
+        color: #fdf5f5;
+        padding: 8px 32px;
+        text-align: center;
+        text-decoration: none;
+        display: inline-block;
+        font-size: 16px;
+        border-radius: 8px;
+            transition-duration: 0.4s;
+        }
+
+        .button3:hover {
+        background-color: #596167; /* Green */
+        color: #fbf3f3;
+        }
+
+        .nav-link {
+            color: #ffffff;
+            font-size: 20px;
+            margin-left: 50px;
+            text-decoration: none;
+        }
+
+        .body {
+            background-color: #3a3b3f;
+        }
+
+        .navbar {
+            background-color: #24262b;
+        }
+
+
+
+        .spacebutton {
+            color: #24262b;
+        }
+        .spacebutton2 {
+            color: #3a3b3f;
+        }
