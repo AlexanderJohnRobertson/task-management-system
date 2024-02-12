@@ -55,7 +55,52 @@ def login():
 @app.route('/createaccount', methods=['GET', 'POST'])
 def createaccount():
     if request.method == 'POST':
-        return redirect(url_for('index'))
+        username = request.form['username']
+        password = request.form['password']
+        confirmPassword = request.form['confirmPassword']
+        firstname = request.form['firstname']
+        lastname = request.form['lastname']
+        email = request.form['email']
+        phonenumber = request.form['phonenumber']
+        accountType = "standard"
+        if not firstname:
+            flash('First Name is required!')
+        elif not lastname:
+            flash('Last Name is required!')
+        elif not username:
+            flash('Username is required!')
+        elif not email:
+            flash('Email Address is required!')
+        elif not phonenumber:
+            flash('Phone Number is required!')
+        elif not username:
+            flash('Username is required!')
+        elif not password:
+            flash('Password is required!')
+        else:
+            try:
+                database = r"database.db"
+                conn = None
+                conn = sqlite3.connect(database)
+                cur = conn.cursor()
+                # cur = mysql.connection.cursor()
+                # cur.execute('SELECT * FROM users WHERE username = %s AND password = %s', (username, password))
+                cur.execute('SELECT * FROM users WHERE username = ?', (username,))
+                user = cur.fetchall()
+                cur.close()
+                if user:
+                    flash('Username already exists!')
+                else:
+                    if password != confirmPassword:
+                        flash('Passwords do not match!')
+                    else:
+                        cur = conn.cursor()
+                        cur.execute('INSERT INTO users VALUES(?, ?, ?, ?, ?, ?, ?)', (username, password, firstname, lastname, email, phonenumber, accountType))
+                        conn.commit()
+                        cur.close()
+                        return redirect(url_for('userhome', globalUsername=username))
+            except IndexError:
+                flash('Username or Password is incorrect!')
     return render_template('createaccount.html')
 
 @app.route('/userhome/<globalUsername>')
