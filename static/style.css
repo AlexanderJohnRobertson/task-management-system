@@ -106,3 +106,16 @@
         .spacebutton2 {
             color: #3a3b3f;
         }
+
+        .table-responsive {
+            color: #fda700;
+            font-size: 20px;
+        }
+
+        .tableStyle {
+            color: #fda700;
+        }
+
+        .access-denied {
+            color: #ff0000;
+        }

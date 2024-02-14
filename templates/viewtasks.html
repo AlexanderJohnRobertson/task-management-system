@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>View Tasks</title>
+    <!-- Latest compiled and minified CSS -->
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+
+
+
+<!-- Latest compiled JavaScript -->
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+</head>
+<body>
+{% extends 'base2.html' %}
+
+{% block content %}
+        <br>
+            <br>
+        <br>
+        <h1 class="heading1" align="center">View Tasks</h1>
+        <div class="table-responsive tableStyle">
+            <table border="1"  class="table table-condensed tableStyle">
+               <tr class="tableStyle">
+                    <th class="tableStyle">TaskID</th>
+                    <th class="tableStyle">Title</th>
+                    <th class="tableStyle">Description</th>
+                    <th class="tableStyle">DueDate</th>
+                    <th class="tableStyle">Priority</th>
+                    <th class="tableStyle">Status</th>
+                    <th class="tableStyle">ProjectID</th>
+                </tr>
+                {% for row in data1 %}
+                <tr class="tableStyle">
+                    <td class="tableStyle">{{ row[0] }}</td>
+                    <td class="tableStyle">{{ row[1] }}</td>
+                    <td class="tableStyle">{{ row[2] }}</td>
+                    <td class="tableStyle">{{ row[3] }}</td>
+                    <td class="tableStyle">{{ row[4] }}</td>
+                    <td class="tableStyle">{{ row[5] }}</td>
+                    <td class="tableStyle">{{ row[6] }}</td>
+                </tr>
+                {% endfor %}
+            </table>
+        </div>
+
+{% endblock %}
+</body>
+</html>

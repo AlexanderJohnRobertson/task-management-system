@@ -1,0 +1,78 @@
+{% extends 'base2.html' %}
+
+{% block content %}
+  <div class="container">
+      <div class="row">
+      <div class="col-sm">
+
+      </div>
+      <div class="col-sm">
+            <br>
+            <br>
+          <h1 class="heading1">{% block title %} Update Task Task {% endblock %}</h1>
+          <form method="post">
+
+              <label for="taskid" class="text1">Task ID:</label>
+              <br>
+              <input type="number" name="taskid"
+                     placeholder="Task ID"
+                     value="{{ request.form['taskid'] }}">
+              </input>
+              <br>
+
+              <label for="title" class="text1">Title</label>
+              <br>
+              <input type="text" name="title"
+                     placeholder="Title"
+                     value="{{ request.form['title'] }}">
+              </input>
+              <br>
+
+
+
+              <label for="description" class="text1">Description</label>
+              <textarea class="md-textarea form-control rounded-0" id="description" rows="5" name="description"></textarea>
+              <br>
+              <label for="duedate" class="text1">Due Date</label>
+              <br>
+              <input type="date" name="duedate"
+                     placeholder="Due Date"
+                     value="{{ request.form['duedate'] }}">
+              </input>
+              <br>
+
+              <label for="priority" class="text1">Priority</label>
+              <br>
+              <input type="text" name="priority"
+                     placeholder="Priority"
+                     value="{{ request.form['priority'] }}">
+              </input>
+              <br>
+
+              <label for="status" class="text1">Status</label>
+              <br>
+              <input type="text" name="status"
+                     placeholder="status"
+                     value="{{ request.form['status'] }}">
+              </input>
+              <br>
+
+              <label for="projectid" class="text1">Project ID</label>
+              <br>
+              <input type="number" name="projectid"
+                     placeholder="Project ID"
+                     value="{{ request.form['projectid'] }}">
+              </input>
+              <br>
+              <br>
+              <button type="submit" class="button1">Update Task</button>
+          </form>
+      </div>
+      <div class="col-sm">
+
+      </div>
+          </div>
+  </div>
+
+
+{% endblock %}

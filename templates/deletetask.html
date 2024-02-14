@@ -1,0 +1,44 @@
+{% extends 'base2.html' %}
+
+{% block content %}
+  <div class="container">
+      <div class="row">
+      <div class="col-sm">
+
+      </div>
+      <div class="col-sm">
+            <br>
+            <br>
+          <h1 class="heading1">{% block title %} Delete Task {% endblock %}</h1>
+          <form method="post">
+
+              <label for="taskid" class="text1">Task ID:</label>
+              <br>
+              <input type="number" name="taskid"
+                     placeholder="Task ID"
+                     value="{{ request.form['taskid'] }}">
+              </input>
+              <br>
+
+              <label for="title" class="text1">Title</label>
+              <br>
+              <input type="text" name="title"
+                     placeholder="Title"
+                     value="{{ request.form['title'] }}">
+              </input>
+              <br>
+
+              </input>
+              <br>
+              <br>
+              <button type="submit" class="button1">Delete Task</button>
+          </form>
+      </div>
+      <div class="col-sm">
+
+      </div>
+          </div>
+  </div>
+
+
+{% endblock %}
