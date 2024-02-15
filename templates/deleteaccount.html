@@ -1,0 +1,53 @@
+{% extends 'base2.html' %}
+
+{% block content %}
+  <div class="container">
+      <div class="row">
+      <div class="col-sm">
+
+      </div>
+      <div class="col-sm">
+            <br>
+            <br>
+          <h1 class="heading1">{% block title %} Delete Account {% endblock %}</h1>
+          <p class="access-denied">WARNING: This will be permanent.</p>
+          <form method="post">
+
+              <label for="username" class="text1">Existing Username</label>
+              <br>
+              <input type="text" name="username"
+                     placeholder="Existing Username"
+                     value="{{ request.form['username'] }}">
+              </input>
+              <br>
+
+              <label for="password" class="text1">Password</label>
+              <br>
+              <input type="password" name="password"
+                     placeholder="Password"
+                     value="{{ request.form['password'] }}">
+              </input>
+              <br>
+
+              <label for="confirmPassword" class="text1">Confirm Password</label>
+              <br>
+              <input type="password" name="confirmPassword"
+                     placeholder="Confirm Password"
+                     value="{{ request.form['confirmPassword'] }}">
+              </input>
+              <br>
+
+              </input>
+              <br>
+              <br>
+              <button type="submit" class="button1">Delete Account</button>
+          </form>
+      </div>
+      <div class="col-sm">
+
+      </div>
+          </div>
+  </div>
+
+
+{% endblock %}

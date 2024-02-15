@@ -35,3 +35,23 @@
     function deleteProject() {
     location.replace("/deleteproject")
     }
+
+    function changeUserName() {
+    location.replace("/changeusername")
+    }
+
+    function changePassword() {
+    location.replace("/changepassword")
+    }
+
+    function deleteAccount(){
+    location.replace("/deleteaccount")
+    }
+
+    function viewAccountDetails() {
+    location.replace("/accountdetails")
+    }
+
+    function updateAccountDetails() {
+    location.replace("/updateaccountdetails")
+    }

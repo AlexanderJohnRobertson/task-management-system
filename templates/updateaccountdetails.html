@@ -1,0 +1,76 @@
+{% extends 'base2.html' %}
+
+{% block content %}
+  <div class="container">
+      <div class="row">
+      <div class="col-sm">
+
+      </div>
+      <div class="col-sm">
+            <br>
+            <br>
+          <h1 class="heading1">{% block title %} Update Account Details {% endblock %}</h1>
+          <form method="post">
+
+              <label for="username" class="text1">Username</label>
+              <br>
+              <input type="text" name="username"
+                     placeholder="Existing Username"
+                     value="{{ request.form['username'] }}">
+              </input>
+              <br>
+
+              <label for="updateFirstName" class="text1">Update First Name</label>
+              <br>
+              <input type="text" name="updateFirstName"
+                     placeholder="Update First Name"
+                     value="{{ request.form['updateFirstName'] }}">
+              </input>
+              <br>
+
+              <label for="updateLastName" class="text1">Update Last Name</label>
+              <br>
+              <input type="text" name="updateLastName"
+                     placeholder="Update Last Name"
+                     value="{{ request.form['updateLastName'] }}">
+              </input>
+              <br>
+
+              <label for="updateEmail" class="text1">Update Email Address</label>
+              <br>
+              <input type="email" name="updateEmail"
+                     placeholder="Update Email Address"
+                     value="{{ request.form['updateEmail'] }}">
+              </input>
+              <br>
+
+              <label for="updatePhoneNumber" class="text1">Update Phone Number</label>
+              <br>
+              <input type="number" name="updatePhoneNumber"
+                     placeholder="Update Phone Number"
+                     value="{{ request.form['updatePhoneNumber'] }}">
+              </input>
+              <br>
+
+              <label for="password" class="text1">Password</label>
+              <br>
+              <input type="password" name="password"
+                     placeholder="Password"
+                     value="{{ request.form['password'] }}">
+              </input>
+              <br>
+
+              </input>
+              <br>
+              <br>
+              <button type="submit" class="button1">Update Account Details</button>
+          </form>
+      </div>
+      <div class="col-sm">
+
+      </div>
+          </div>
+  </div>
+
+
+{% endblock %}

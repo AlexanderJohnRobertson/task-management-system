@@ -2,6 +2,7 @@ from flask import Flask, render_template, request, url_for, redirect, jsonify, f
 import os
 import sqlite3
 from sqlite3 import Error, IntegrityError, OperationalError
+import time
 
 
 app = Flask(__name__)
@@ -74,7 +75,7 @@ def createaccount():
         lastname = request.form['lastname']
         email = request.form['email']
         phonenumber = request.form['phonenumber']
-        accountType = "standard"
+        accountType = "Standard"
         if not firstname:
             flash('First Name is required!')
         elif not lastname:
@@ -198,6 +199,8 @@ def viewprojects():
     cur = conn.cursor()
     cur.execute("SELECT * FROM projects")
     data = cur.fetchall()
+    print(data)
+    print(type(data))
 
     #return jsonify(data)
     return render_template('viewprojects.html', data1=data)
@@ -599,6 +602,292 @@ def deleteproject():
                 #flash('Database locked.')
                 #return redirect(url_for('updatetask'))
     return render_template('deleteproject.html')
+
+@app.route('/changeusername', methods=['POST', 'GET'])
+def changeUsername():
+    cookie = request.cookies.get('userID')
+    print("Cookie", cookie)
+    database = r"database.db"
+    conn = None
+    conn = sqlite3.connect(database)
+    cur = conn.cursor()
+    cur.execute('SELECT * FROM users WHERE username = ?', (cookie,))
+    user = cur.fetchall()
+    cur.close()
+    print("User: ", user)
+    if not user:
+        return render_template('accessdenied.html')
+    if request.method == 'POST':
+        username = request.form['username']
+        newUsername = request.form['newUsername']
+        confirmNewUsername = request.form['confirmNewUsername']
+        password = request.form['password']
+        print(username)
+        print(password)
+        print(newUsername)
+        print(confirmNewUsername)
+        if not username:
+            flash('Username is required!')
+        elif not newUsername:
+            flash('New Username is required!')
+        elif not confirmNewUsername:
+            flash('Confirm New Username is required!')
+        elif not password:
+            flash('Password is required!')
+        elif newUsername != confirmNewUsername:
+            flash('New Username and Confirm New Username do not match!')
+        else:
+            try:
+                database = r"database.db"
+                conn = None
+                conn = sqlite3.connect(database)
+                cur = conn.cursor()
+                cur.execute('SELECT * FROM users WHERE username = ?', (username,))
+                user = cur.fetchall()
+                if not user:
+                    flash('User does not exist!')
+                elif username != cookie:
+                    flash('New Your username does not match your current username!')
+                else:
+                    cur.execute('UPDATE users SET username = ? WHERE username = ?', (newUsername, cookie,))
+                    conn.commit()
+                    cur.close()
+                    resp = make_response(render_template('readcookie.html'))
+                    resp.set_cookie('userID', newUsername)
+                    flash('Username changed successfully!')
+                    #time.sleep(3)
+                    return resp
+            except IndexError:
+                flash('Error changing!')
+            except IntegrityError:
+                flash('User already exists!')
+            #except OperationalError:
+                #flash('Database locked.')
+                #return redirect(url_for('updatetask'))
+    return render_template('changeusername.html')
+
+@app.route('/changepassword', methods=['POST', 'GET'])
+def changePassword():
+    cookie = request.cookies.get('userID')
+    print("Cookie", cookie)
+    database = r"database.db"
+    conn = None
+    conn = sqlite3.connect(database)
+    cur = conn.cursor()
+    cur.execute('SELECT * FROM users WHERE username = ?', (cookie,))
+    user = cur.fetchall()
+    cur.close()
+    print("User: ", user)
+    if not user:
+        return render_template('accessdenied.html')
+    if request.method == 'POST':
+        username = request.form['username']
+        password = request.form['password']
+        newPassword = request.form['newPassword']
+        confirmPassword = request.form['confirmPassword']
+        print(username)
+        print(password)
+        print(newPassword)
+        print(confirmPassword)
+        if not username:
+            flash('Username is required!')
+        elif not password:
+            flash('Password is required!')
+        elif not newPassword:
+            flash('New Password is required!')
+        elif not confirmPassword:
+            flash('Confirm New Password is required!')
+        elif newPassword != confirmPassword:
+            flash('New Password and Confirm New Password do not match!')
+        else:
+            try:
+                database = r"database.db"
+                conn = None
+                conn = sqlite3.connect(database)
+                cur = conn.cursor()
+                cur.execute('SELECT * FROM users WHERE username = ?', (username,))
+                user = cur.fetchall()
+                if not user:
+                    flash('User does not exist!')
+                elif username != cookie:
+                    flash('New Your username does not match your current username!')
+                else:
+                    cur.execute('UPDATE users SET password = ? WHERE username = ?', (newPassword, cookie,))
+                    conn.commit()
+                    cur.close()
+                    flash('Password changed successfully!')
+                    return redirect(url_for('userhome'))
+            except IndexError:
+                flash('Error changing!')
+            except IntegrityError:
+                flash('User already exists!')
+            #except OperationalError:
+                #flash('Database locked.')
+                #return redirect(url_for('updatetask'))
+    return render_template('changepassword.html')
+
+@app.route('/deleteaccount', methods=['POST', 'GET'])
+def deleteAccount():
+    cookie = request.cookies.get('userID')
+    print("Cookie", cookie)
+    database = r"database.db"
+    conn = None
+    conn = sqlite3.connect(database)
+    cur = conn.cursor()
+    cur.execute('SELECT * FROM users WHERE username = ?', (cookie,))
+    user = cur.fetchall()
+    cur.close()
+    print("User: ", user)
+    if not user:
+        return render_template('accessdenied.html')
+    if request.method == 'POST':
+        username = request.form['username']
+        password = request.form['password']
+        confirmPassword = request.form['confirmPassword']
+        print(username)
+        print(password)
+        print(confirmPassword)
+        if not username:
+            flash('Username is required!')
+        elif not password:
+            flash('Password is required!')
+        elif not confirmPassword:
+            flash('Confirm New Password is required!')
+        elif password != confirmPassword:
+            flash('Password and Confirm Password do not match!')
+        else:
+            try:
+                database = r"database.db"
+                conn = None
+                conn = sqlite3.connect(database)
+                cur = conn.cursor()
+                cur.execute('SELECT * FROM users WHERE username = ?', (username,))
+                user = cur.fetchall()
+                if not user:
+                    flash('User does not exist!')
+                elif username != cookie:
+                    flash('New Your username does not match your current username!')
+                else:
+                    cur.execute('DELETE FROM users WHERE username = ?', (cookie,))
+                    conn.commit()
+                    cur.close()
+                    flash('Account Deleted successfully!')
+                    return redirect(url_for('index'))
+            except IndexError:
+                flash('Error changing!')
+            except IntegrityError:
+                flash('User already exists!')
+            #except OperationalError:
+                #flash('Database locked.')
+                #return redirect(url_for('updatetask'))
+    return render_template('deleteaccount.html')
+
+@app.route('/accountdetails')
+def viewAccountDetails():
+    try:
+        cookie = request.cookies.get('userID')
+        print("Cookie", cookie)
+        database = r"database.db"
+        conn = None
+        conn = sqlite3.connect(database)
+        cur = conn.cursor()
+        cur.execute('SELECT * FROM users WHERE username = ?', (cookie,))
+        user = cur.fetchall()
+        cur.close()
+        if not user:
+            return render_template('accessdenied.html')
+    except IndexError:
+        flash('Error')
+    database = r"database.db"
+    conn = None
+    try:
+        conn = sqlite3.connect(database)
+    except Error as e:
+        print(e)
+    cur = conn.cursor()
+    cur.execute("SELECT * FROM users WHERE username = ?", (cookie,))
+    data = cur.fetchall()
+    tupleData = data[0]
+    print(tupleData)
+    tupleData = tupleData[0],tupleData[2],tupleData[3],tupleData[4],tupleData[5],tupleData[6]
+    print(tupleData)
+    print(type(tupleData))
+    data = []
+    data.append(tupleData)
+
+    #return jsonify(data)
+    return render_template('accountdetails.html', data1=data)
+
+@app.route('/updateaccountdetails', methods=['POST', 'GET'])
+def updateAccountDetails():
+    cookie = request.cookies.get('userID')
+    print("Cookie", cookie)
+    database = r"database.db"
+    conn = None
+    conn = sqlite3.connect(database)
+    cur = conn.cursor()
+    cur.execute('SELECT * FROM users WHERE username = ?', (cookie,))
+    user = cur.fetchall()
+    cur.close()
+    print("User: ", user)
+    if not user:
+        return render_template('accessdenied.html')
+    if request.method == 'POST':
+        username = request.form['username']
+        password = request.form['password']
+        firstName = request.form['updateFirstName']
+        lastName = request.form['updateLastName']
+        email = request.form['updateEmail']
+        phoneNumber = request.form['updatePhoneNumber']
+        print(username)
+        print(password)
+        print(firstName)
+        print(lastName)
+        print(email)
+        print(phoneNumber)
+        if not username:
+            flash('Username is required!')
+        elif not firstName:
+            flash('First Name is required!')
+        elif not lastName:
+            flash('Last Name is required!')
+        elif not email:
+            flash('Email is required!')
+        elif not phoneNumber:
+            flash('Phone Number is required!')
+        elif not password:
+            flash('Password is required!')
+        else:
+            try:
+                database = r"database.db"
+                conn = None
+                conn = sqlite3.connect(database)
+                cur = conn.cursor()
+                cur.execute('SELECT * FROM users WHERE username = ?', (cookie,))
+                user = cur.fetchall()
+                tupleUser = user[0]
+                if not user:
+                    flash('User does not exist!')
+                elif username != cookie:
+                    flash('New Your username does not match your current username!')
+                elif password != tupleUser[1]:
+                    flash('Password is incorrect!')
+                else:
+                    cur.execute('UPDATE users SET forename = ?, surname = ?, email = ?, phone = ? WHERE username = ?', (firstName, lastName, email, phoneNumber, cookie,))
+                    conn.commit()
+                    cur.close()
+                    flash('Account details updated successfully!')
+                    return redirect(url_for('userhome'))
+            except IndexError:
+                flash('Error changing!')
+            except IntegrityError:
+                flash('User already exists!')
+            #except OperationalError:
+                #flash('Database locked.')
+                #return redirect(url_for('updatetask'))
+    return render_template('updateaccountdetails.html')
+
+
 
 if __name__ == '__main__':
     port = int(os.environ.get('PORT', 5000))
