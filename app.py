@@ -887,7 +887,47 @@ def updateAccountDetails():
                 #return redirect(url_for('updatetask'))
     return render_template('updateaccountdetails.html')
 
+@app.route('/testpage' , methods=['GET', 'POST'])
+def testpage():
+    if request.method == 'POST':
+        username = request.form['username']
+        password = request.form['password']
+        if not username:
+            flash('Username is required!')
+        elif not password:
+            flash('Password is required!')
+        else:
+            try:
+                database = r"database.db"
+                conn = None
+                conn = sqlite3.connect(database)
+                cur = conn.cursor()
+                # cur = mysql.connection.cursor()
+                # cur.execute('SELECT * FROM users WHERE username = %s AND password = %s', (username, password))
+                cur.execute('SELECT * FROM users WHERE username = ? AND password = ?', (username, password))
+                user = cur.fetchall()
+                cur.close()
+                User = user[0]
+                Uname = User[0]
+                Pword = User[1]
+                if Uname == username and Pword == password:
+                    global_var(Uname)
+                    print(globalUsername)
+                    user = Uname
+                    resp = make_response(render_template('readcookie.html'))
+                    resp.set_cookie('userID', user)
+                    return resp
+                    #return redirect(url_for('userhome', globalUsername = username))
+                else:
+                    # globalAttempt = global_var2(globalAttempt)
+                    flash('Username or Password is incorrect!')
+                    # print(globalAttempt)
+            except IndexError:
+                # globalAttempt = global_var2(globalAttempt)
 
+                flash('Username or Password is incorrect!')
+                # print(globalAttempt)
+    return render_template('testpage.html')
 
 if __name__ == '__main__':
     port = int(os.environ.get('PORT', 5000))

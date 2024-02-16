@@ -99,7 +99,6 @@
         }
 
 
-
         .spacebutton {
             color: #24262b;
         }
@@ -118,4 +117,9 @@
 
         .access-denied {
             color: #ff0000;
+        }
+
+        /* Hide the link that should open and close the topnav on small screens */
+        .topnav .icon {
+            display: none;
         }
