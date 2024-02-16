@@ -172,7 +172,7 @@ def viewtasks():
     data = cur.fetchall()
 
     #return jsonify(data)
-    return render_template('testpage.html', data1=data)
+    return render_template('viewtasks.html', data1=data)
 
 @app.route('/viewprojects', methods=['GET', 'POST'])
 def viewprojects():

@@ -60,6 +60,8 @@ section {
   margin: 0 auto;
   display: flex;
   position: relative;
+    align-items: center;
+
 }
 
 .logo-container {

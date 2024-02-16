@@ -1,5 +1,5 @@
 table {
-  border: 1px solid #fda700;
+  border: 1px solid #3c3f3f;
   border-collapse: collapse;
   margin: 0;
   padding: 0;
@@ -39,6 +39,17 @@ table th {
     border-color: #ff8900;
 }
 
+.table-container {
+  max-width: 65rem;
+  padding: 0 2rem;
+  margin: 0 auto;
+  position: relative;
+    align-items: center;
+  overflow-y:scroll;
+   height: 100%;
+   display:block;
+
+}
 @media screen and (max-width: 600px) {
   table {
     border: 0;

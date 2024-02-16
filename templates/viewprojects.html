@@ -1,41 +1,35 @@
-<!DOCTYPE html>
-<html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <title>View Tasks</title>
-    <!-- Latest compiled and minified CSS -->
-<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
-
-
-
-<!-- Latest compiled JavaScript -->
-<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+    <link rel="stylesheet" href="/static/tablestyle.css">
 </head>
-<body>
+
 {% extends 'base4.html' %}
 
 {% block content %}
-    <br>
-        <br>
-    <h1 class="heading1" align="center">View Projects</h1>
-    <div class="table-responsive">
-        <table border="1"  class="table table-condensed">
-               <tr>
-        <th>ProjectID</th>
-        <th>Title</th>
-        <th>Description</th>
-        <th>Tasks</th>
-      </tr>
-        {% for row in data1 %}
-            <tr>
-                <td>{{ row[0] }}</td>
-                <td>{{ row[1] }}</td>
-                <td>{{ row[2] }}</td>
-                <td>{{ row[3] }}</td>
-            </tr>
-        {% endfor %}
-            </table>
-    </div>
+<div class="table-container">
+  <table>
+  <caption>View Projects</caption>
+  <thead>
+    <tr>
+      <th scope="col">Project ID</th>
+      <th scope="col">Title</th>
+      <th scope="col">Description</th>
+      <th scope="col">Assigned Tasks</th>
+    </tr>
+  </thead>
+  <tbody>
+
+
+  {% for row in data1 %}
+    <tr>
+      <td data-label="Project ID">{{ row[0] }}</td>
+      <td data-label="Title">{{ row[1] }}</td>
+      <td data-label="Description">{{ row[2] }}</td>
+      <td data-label="Assigned Tasks">{{ row[3] }}</td>
+
+    </tr>
+  {% endfor %}
+  </tbody>
+</table>
+  </div>
+
 {% endblock %}
-</body>
-</html>

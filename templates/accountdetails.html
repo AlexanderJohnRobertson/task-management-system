@@ -1,45 +1,39 @@
-<!DOCTYPE html>
-<html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <title>View Tasks</title>
-    <!-- Latest compiled and minified CSS -->
-<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
-
-
-
-<!-- Latest compiled JavaScript -->
-<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+    <link rel="stylesheet" href="/static/tablestyle.css">
 </head>
-<body>
+
 {% extends 'base4.html' %}
 
 {% block content %}
-    <br>
-        <br>
-    <h1 class="heading1" align="center">Your Account Details</h1>
-    <div class="table-responsive">
-        <table border="1"  class="table table-condensed">
-               <tr>
-        <th>Username</th>
-        <th>First Name</th>
-        <th>Last Name</th>
-        <th>Email Address</th>
-        <th>Phone Number</th>
-        <th>Account Type</th>
-      </tr>
-        {% for row in data1 %}
-            <tr>
-                <td>{{ row[0] }}</td>
-                <td>{{ row[1] }}</td>
-                <td>{{ row[2] }}</td>
-                <td>{{ row[3] }}</td>
-                <td>{{ row[4] }}</td>
-                <td>{{ row[5] }}</td>
-            </tr>
-        {% endfor %}
-            </table>
-    </div>
+<div class="table-container">
+  <table>
+  <caption>Your Account Details</caption>
+  <thead>
+    <tr>
+      <th scope="col">Username</th>
+      <th scope="col">First Name</th>
+      <th scope="col">Last Name</th>
+      <th scope="col">Email Address</th>
+        <th scope="col">Phone Number</th>
+        <th scope="col">Account Type</th>
+    </tr>
+  </thead>
+  <tbody>
+
+
+  {% for row in data1 %}
+    <tr>
+      <td data-label="Username">{{ row[0] }}</td>
+      <td data-label="First Name">{{ row[1] }}</td>
+      <td data-label="Last Name">{{ row[2] }}</td>
+      <td data-label="Email Address">{{ row[3] }}</td>
+        <td data-label="Phone Number">{{ row[4] }}</td>
+        <td data-label="Account Type">{{ row[5] }}</td>
+
+    </tr>
+  {% endfor %}
+  </tbody>
+</table>
+  </div>
+
 {% endblock %}
-</body>
-</html>

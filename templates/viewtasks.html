@@ -1,48 +1,39 @@
-<!DOCTYPE html>
-<html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <title>View Tasks</title>
-    <!-- Latest compiled and minified CSS -->
-<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
-
-
-
-<!-- Latest compiled JavaScript -->
-<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+    <link rel="stylesheet" href="/static/tablestyle.css">
 </head>
-<body>
+
 {% extends 'base4.html' %}
 
 {% block content %}
+  <table>
+  <caption>View Tasks</caption>
+  <thead>
+    <tr>
+      <th scope="col">Task ID</th>
+      <th scope="col">Title</th>
+      <th scope="col">Description</th>
+      <th scope="col">Due Date</th>
+        <th scope="col">Priority</th>
+        <th scope="col">Status</th>
+        <th scope="col">Project ID</th>
+    </tr>
+  </thead>
+  <tbody>
 
-        <h1 class="heading1" align="center">View Tasks</h1>
-        <div class="table-responsive tableStyle">
-            <table border="1"  class="table table-condensed tableStyle">
-                <caption>View Tasks</caption>
-               <tr class="tableStyle">
-                    <th class="tableStyle">TaskID</th>
-                    <th class="tableStyle">Title</th>
-                    <th class="tableStyle">Description</th>
-                    <th class="tableStyle">DueDate</th>
-                    <th class="tableStyle">Priority</th>
-                    <th class="tableStyle">Status</th>
-                    <th class="tableStyle">ProjectID</th>
-                </tr>
-                {% for row in data1 %}
-                <tr class="tableStyle">
-                    <td class="tableStyle">{{ row[0] }}</td>
-                    <td class="tableStyle">{{ row[1] }}</td>
-                    <td class="tableStyle">{{ row[2] }}</td>
-                    <td class="tableStyle">{{ row[3] }}</td>
-                    <td class="tableStyle">{{ row[4] }}</td>
-                    <td class="tableStyle">{{ row[5] }}</td>
-                    <td class="tableStyle">{{ row[6] }}</td>
-                </tr>
-                {% endfor %}
-            </table>
-        </div>
+
+  {% for row in data1 %}
+    <tr>
+      <td data-label="Task ID">{{ row[0] }}</td>
+      <td data-label="Title">{{ row[1] }}</td>
+      <td data-label="Description">{{ row[2] }}</td>
+      <td data-label="Due Date">{{ row[3] }}</td>
+        <td data-label="Priority">{{ row[4] }}</td>
+        <td data-label="Status">{{ row[5] }}</td>
+        <td data-label="Project ID">{{ row[6] }}</td>
+
+    </tr>
+  {% endfor %}
+  </tbody>
+</table>
 
 {% endblock %}
-</body>
-</html>
