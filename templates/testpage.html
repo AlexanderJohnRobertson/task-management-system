@@ -1,84 +1,39 @@
-{% extends 'base3.html' %}
+<head>
+    <link rel="stylesheet" href="/static/tablestyle.css">
+</head>
+
+{% extends 'base4.html' %}
 
 {% block content %}
-  <div class="container">
-    <div class="row"></div>
-    <div class="col-sm">
-        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-    <br>
-    </div>
-    <div class="col-sm">
-        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-    <br>
-    </div>
-    <div class="col-sm">
-        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-    <br>
-    </div>
-    <div class="col-sm">
-        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-    <br>
-    </div>
-    <div class="row">
-        <div class="col-sm">
-        &nbsp;&nbsp;
-        </div>
-        <div class="col-sm">
-
-            <h1 class="heading1">{% block title %} Log In {% endblock %}</h1>
-            <form method="post">
-
-                    <label for="title" class="text1">Username:</label>
-                    <br>
-                    <input type="text" name="username"
-                           placeholder="Username"
-                           value="{{ request.form['username'] }}">
-                    </input>
-                    <br>
-
-                    <label for="password" class="text1">Password</label>
-                    <br>
-                    <input type="password" name="password"
-                        placeholder="Password"
-                        value="{{ request.form['password'] }}">
-                    </input>
-                    <br>
-
-                    <input type="checkbox" id="checkbox" name="vehicle1" value="stayLoggedIn">
-                    <label for="checkbox" class="text1"> Keep me logged in.</label><br>
-
-                    <button type="submit" class="btn transparent">Submit</button>
-            </form>
-
-        </div>
-        <div class="col-sm">
+  <table>
+  <caption>View Tasks</caption>
+  <thead>
+    <tr>
+      <th scope="col">Task ID</th>
+      <th scope="col">Title</th>
+      <th scope="col">Description</th>
+      <th scope="col">Due Date</th>
+        <th scope="col">Priority</th>
+        <th scope="col">Status</th>
+        <th scope="col">Project ID</th>
+    </tr>
+  </thead>
+  <tbody>
 
 
-        </div>
-            <div class="col-sm">
-                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+  {% for row in data1 %}
+    <tr>
+      <td data-label="Task ID">{{ row[0] }}</td>
+      <td data-label="Title">{{ row[1] }}</td>
+      <td data-label="Description">{{ row[2] }}</td>
+      <td data-label="Due Date">{{ row[3] }}</td>
+        <td data-label="Priority">{{ row[4] }}</td>
+        <td data-label="Status">{{ row[5] }}</td>
+        <td data-label="Project ID">{{ row[6] }}</td>
 
-        </div>
-    </div>
-    <div class="row">
-        <div class="col-sm">
-           &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-    <br>
-    </div>
-    <div class="col-sm">
-
-            <img src="/static/login.png" width="250" height="350">
-    <br>
-    </div>
-    <div class="col-sm">
-        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-    <br>
-    </div>
-    <div class="col-sm">
-        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-    <br>
-    </div>
-    </div>
-  </div>
+    </tr>
+  {% endfor %}
+  </tbody>
+</table>
 
 {% endblock %}

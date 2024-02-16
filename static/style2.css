@@ -516,7 +516,7 @@ section {
 
         .table{
    overflow-y:scroll;
-   height: 700px;
+   height: 90%;
    display:block;
 }
 
