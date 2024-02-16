@@ -514,6 +514,12 @@ section {
             color: #fda700;
         }
 
+        .table{
+   overflow-y:scroll;
+   height: 700px;
+   display:block;
+}
+
         .access-denied {
             color: #ff0000;
         }
