@@ -6,6 +6,7 @@
     <title>{% block title %} {% endblock %} - FlaskApp</title>
 
     <link rel="stylesheet" href="/static/style2.css">
+  <script src="/static/navbar.js"></script>
 </head>
 <body>
     <header>
@@ -19,23 +20,23 @@
         <div class="nav-links">
           <ul>
             <li class="nav-link" style="--i: .6s">
-              <a href="#">Home</a>
+              <a href="{{ url_for('userhome') }}">Home</a>
             </li>
             <li class="nav-link" style="--i: .85s">
               <a href="#"><span>Manage&nbsp;</span><span>Tasks</span><i class="fas fa-caret-down"></i></a>
               <div class="dropdown">
                 <ul>
                   <li class="dropdown-link">
-                    <a href="#">Create Task</a>
+                    <a href="{{ url_for('addtask') }}">Create Task</a>
                   </li>
                   <li class="dropdown-link">
-                    <a href="#">View Tasks</a>
+                    <a href="{{ url_for('viewtasks') }}">View Tasks</a>
                   </li>
                   <li class="dropdown-link">
-                    <a href="#">Update Tasks</a>
+                    <a href="{{ url_for('updatetask') }}">Update Task</a>
                   </li>
                   <li class="dropdown-link">
-                    <a href="#">Update Tasks</a>
+                    <a href="{{ url_for('deletetask') }}">Delete Task</a>
                   </li>
                   <div class="arrow"></div>
                 </ul>
@@ -46,16 +47,16 @@
               <div class="dropdown">
                 <ul>
                   <li class="dropdown-link">
-                    <a href="#">Create Project</a>
+                    <a href="{{ url_for('addproject') }}">Create Project</a>
                   </li>
                   <li class="dropdown-link">
-                    <a href="#">View Projects</a>
+                    <a href="{{ url_for('viewprojects') }}">View Projects</a>
                   </li>
                   <li class="dropdown-link">
-                    <a href="#">Update Projects</a>
+                    <a href="{{ url_for('updateproject') }}">Update Projects</a>
                   </li>
                   <li class="dropdown-link">
-                    <a href="#">Delete Project</a>
+                    <a href="{{ url_for('deleteproject') }}">Delete Project</a>
                   </li>
                   <div class="arrow"></div>
                 </ul>
@@ -66,27 +67,26 @@
               <div class="dropdown">
                 <ul>
                   <li class="dropdown-link">
-                    <a href="#">View Account Details</a>
+                    <a onclick="viewAccountDetails()">View Account Details</a>
                   </li>
                   <li class="dropdown-link">
-                    <a href="#">Change Account Details</a>
+                    <a onclick="updateAccountDetails()">Change Account Details</a>
                   </li>
                   <li class="dropdown-link">
-                    <a href="#">Change Username</a>
+                    <a onclick="changeUserName()">Change Username</a>
                   </li>
                   <li class="dropdown-link">
-                    <a href="#">Change Password</a>
+                    <a onclick="changePassword()">Change Password</a>
                   </li>
                   <li class="dropdown-link">
-                    <a href="#">Delete Account</a>
+                    <a onclick="deleteAccount()">Delete Account</a>
                   </li>
                   <div class="arrow"></div>
                 </ul>
               </div>
             </li>
             <div class="log-sign" style="--i: 1.8s">
-          <a href="#" class="btn transparent"><span>Create&nbsp;</span><span>Account</span></a>
-          <a href="#" class="btn solid"><span>Log&nbsp;</span><span>In</span></a>
+          <a href="{{ url_for('index') }}" class="btn solid"><span>Log&nbsp;</span><span>Out</span></a>
         </div>
           </ul>
         </div>
