@@ -1,0 +1,194 @@
+@import "//fonts.googleapis.com/css?family=Roboto+Condensed:400,700&subset=latin"
+
+$blue: #00aeef
+$lightgray: #ddd
+
+*,
+*:before,
+*:after
+  box-model: border-box
+
+body
+  color: #333
+  font: 20px/1.5 'Roboto Condensed', sans-serif
+  background: #eee
+  min-width: 420px
+
+form,
+fieldset,
+legend
+  padding: 0
+  margin: 0
+
+form
+  width: 50%
+  margin: 50px auto
+  overflow: hidden
+
+fieldset
+  margin: 60px 0
+  position: relative
+  border: 1px solid $lightgray
+
+legend
+  font-weight: 600
+  position: absolute
+  top: -40px
+  border: 0
+
+input[type=radio]
+  display: none
+
+label
+  font-size: 17px
+  font-weight: bold
+  line-height: 1
+  cursor: pointer
+  display: block
+  padding: 15px 10px 15px 50px
+  position: relative
+  border-top: 1px solid $lightgray
+  background: white
+  whitespace: no-wrap
+  overflow: hidden
+  text-overflow: ellipsis
+
+  transition: all .15s ease
+
+  &:focus,
+  &:hover,
+  &:active
+    @extend %active-label
+
+  &:first-of-type
+    border: 0
+
+  &:before
+    content: ""
+    position: absolute
+    left: 14px
+    top: 14px
+    width: 16px
+    height: 16px
+    border-radius: 50%
+    border: 1px solid darken($lightgray, 5%)
+
+  span
+    color: darken($lightgray, 15%)
+    font-weight: normal
+    position: absolute
+    left: 35%
+
+  strong
+    color: $blue
+    text-align: right
+    float: right
+
+
+input:checked + label
+  @extend %active-label
+
+%active-label
+  color: white
+  background: $blue
+  border-color: white
+
+  span,
+  strong
+    color: white
+
+  &:before
+    left: 13px
+    top: 13px
+    width: 12px
+    height: 12px
+    border: 4px solid white
+    background: $blue
+
+.most-chosen
+  &:after
+    content: "MOST CHOSEN"
+    color: white
+    font-size: 12px
+    font-weight: normal
+    background: #333
+    position: absolute
+    right: 12%
+    top: 13px
+    display: block
+    padding: 5px 7px
+
+
+button
+  color: white
+  background: $blue
+  border: 0
+  padding: 10px 15px
+  float: right
+
+  &:focus,
+  &:hover,
+  &:active
+    background: #333
+    outline: 0
+
+p
+  color: #666
+
+a
+  color: $blue
+
+.footer
+  text-align: center
+
+
+
+
+@media all and (max-width: 1000px)
+  .most-chosen:after
+    content: none
+
+
+
+@media all and (max-width: 800px)
+  label
+    padding-bottom: 35px
+
+    &:before
+      top: 25px
+
+    span
+      font-size: 14px
+      display: block
+      margin-top: 5px
+      left: auto
+
+  input:checked + label,
+  label:focus,
+  label:active,
+  label:hover
+    &:before
+      top: 24px
+
+  button
+    width: 100%
+    float: none
+
+@media all and (max-width: 550px)
+  label
+    padding: 15px 10px 15px 50px
+
+    &:before
+      left: 14px
+      top: 14px
+
+    span
+      display: none
+
+  input:checked + label,
+  label:focus,
+  label:active,
+  label:hover
+    &:before
+      left: 13px
+      top: 13px

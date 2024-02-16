@@ -289,8 +289,8 @@ def addtask():
                 flash('Task ID already exists!')
             except OperationalError:
                 flash('Database locked.')
-                return redirect(url_for('addtask'))
-    return render_template('addtask.html')
+                return redirect(url_for('testpage'))
+    return render_template('testpage.html')
 
 @app.route('/updatetask', methods=['POST', 'GET'])
 def updatetask():
@@ -903,21 +903,73 @@ def testpage():
             return render_template('accessdenied.html')
     except IndexError:
         flash('Error')
-    database = r"database.db"
-    conn = None
-    try:
-        conn = sqlite3.connect(database)
-    except Error as e:
-        print(e)
-    cur = conn.cursor()
-    cur.execute("SELECT * FROM tasks")
-    data = cur.fetchall()
-    tupleData = data[0]
-    description = tupleData[2]
-    print(data)
-    print(description)
-    print(description)
-    return render_template('testpage.html', data1=data)
+    if request.method == 'POST':
+        taskid = request.form['taskid']
+        title = request.form['title']
+        # description = request.form['description']
+        duedate = request.form['duedate']
+        priority = request.form['priority']
+        status = request.form['status']
+        projectid = request.form['projectid']
+        description = request.form.get('description')
+        print(taskid)
+        print(title)
+        print(description)
+        print(duedate)
+        print(priority)
+        print(status)
+        print(projectid)
+        if not taskid:
+            flash('Task ID is required!')
+        elif not title:
+            flash('Title is required!')
+        elif not description:
+            flash('Description is required!')
+        elif not duedate:
+            flash('Due Date is required!')
+        elif not priority:
+            flash('Priority is required!')
+        elif not status:
+            flash('Status is required!')
+        elif not projectid:
+            flash('Project ID is required!')
+        elif priority != 'High' and priority != 'Medium' and priority != 'Low':
+            flash('Priority must be High, Medium, or Low!')
+        elif status != 'Planned' and status != 'In Progress' and status != 'Completed' and status != 'Overdue' and status != 'Cancelled' and status != 'Not Started':
+            flash('Status must be Not Started, Planned, In Progress, Completed, Overdue or Cancelled!')
+        else:
+            try:
+                database = r"database.db"
+                conn = None
+                conn = sqlite3.connect(database)
+                cur = conn.cursor()
+                cur.execute('SELECT * FROM tasks WHERE taskID = ?', (taskid,))
+                task = cur.fetchall()
+                cur.execute('SELECT * FROM projects WHERE projectID = ?', (projectid,))
+                project = cur.fetchall()
+                cur.execute('SELECT * FROM users WHERE username = ?', (cookie,))
+                user = cur.fetchall()
+                if task:
+                    flash('Task ID already exists!')
+                elif not project:
+                    flash('Project ID does not exist!')
+                elif not user:
+                    return render_template('accessdenied.html')
+                else:
+                    cur.execute('INSERT INTO tasks VALUES(?, ?, ?, ?, ?, ?, ?)',
+                                (taskid, title, description, duedate, priority, status, projectid))
+                    conn.commit()
+                    cur.close()
+                    # flash ('Task added successfully!')
+                    return redirect(url_for('viewtasks'))
+            except IndexError:
+                flash('Error adding task!')
+            except IntegrityError:
+                flash('Task ID already exists!')
+            except OperationalError:
+                flash('Database locked.')
+                return redirect(url_for('testpage'))
+    return render_template('testpage.html')
 
 if __name__ == '__main__':
     port = int(os.environ.get('PORT', 5000))
