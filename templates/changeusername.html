@@ -1,60 +1,47 @@
+<head>
+  <link rel="stylesheet" href="/static/formstyle.css  ">
+</head>
 {% extends 'base4.html' %}
 
 {% block content %}
-  <div class="container">
-      <div class="row">
-      <div class="col-sm">
 
-      </div>
-      <div class="col-sm">
-            <br>
-            <br>
           <h1 class="heading1">{% block title %} Change Username {% endblock %}</h1>
-          <form method="post">
-
-              <label for="username" class="text1">Existing Username</label>
-              <br>
-              <input type="text" name="username"
-                     placeholder="Existing Username"
-                     value="{{ request.form['username'] }}">
-              </input>
-              <br>
-
-              <label for="newUsername" class="text1">New Username</label>
-              <br>
-              <input type="text" name="newUsername"
-                     placeholder="New Username"
-                     value="{{ request.form['newUsername'] }}">
-              </input>
-              <br>
-
-              <label for="confirmNewUsername" class="text1">Confirm New Username</label>
-              <br>
-              <input type="text" name="confirmNewUsername"
-                     placeholder="Confirm New Username"
-                     value="{{ request.form['confirmNewUsername'] }}">
-              </input>
-              <br>
-
-              <label for="password" class="text1">Password</label>
-              <br>
-              <input type="password" name="password"
-                     placeholder="Password"
-                     value="{{ request.form['password'] }}">
-              </input>
-              <br>
-
-              </input>
-              <br>
-              <br>
-              <button type="submit" class="button1">Change Username</button>
-          </form>
+          <div class="wpcf7" id="wpcf7-f156-p143-o1 formwrap">
+    <form method="post" class="wpcf7-form" novalidate="novalidate">
+        <div style="display: none;">
+            <input type="hidden" name="_wpcf7" value="156">
+            <input type="hidden" name="_wpcf7_version" value="3.7.2">
+            <input type="hidden" name="_wpcf7_locale" value="en_US">
+            <input type="hidden" name="_wpcf7_unit_tag" value="wpcf7-f156-p143-o1">
+            <input type="hidden" name="_wpnonce" value="d1da331d93">
+        </div>
+        <p>
+           <span class="wpcf7-form-control-wrap username">
+             <label class="text1">Existing Username:</label>
+             <input type="text" name="username" value="" size="40" class="textinput wpcf7-form-control wpcf7-text wpcf7-validates-as-required" aria-required="true" aria-invalid="false" placeholder="Your current username.">
+          </span>
+          <span class="wpcf7-form-control-wrap newUsername">
+             <label class="text1">New Username:</label>
+             <input type="text" name="newUsername" value="" size="40" class="textinput wpcf7-form-control wpcf7-text wpcf7-validates-as-required" aria-required="true" aria-invalid="false" placeholder="New username.">
+          </span>
+          <span class="wpcf7-form-control-wrap confirmNewUsername       ">
+             <label class="text1">Confirm New Username:</label>
+             <input type="text" name="confirmNewUsername" value="" size="40" class="textinput wpcf7-form-control wpcf7-text wpcf7-validates-as-required" aria-required="true" aria-invalid="false" placeholder="Confirm new username.">
+          </span>
+          <span class="wpcf7-form-control-wrap password">
+             <label class="text1">Password:</label>
+             <input type="password" name="password" value="" size="40" class="textinput wpcf7-form-control wpcf7-text wpcf7-validates-as-required" aria-required="true" aria-invalid="false" placeholder="Enter your password to authorise changes.">
+          </span>
+          <button type="submit" class="btn transparent">Change Username</button>
+            <br>
+            <br>
+            <br>
+          <img class="ajax-loader" src="http://www.jordancundiff.com/wp-content/plugins/contact-form-7/images/ajax-loader.gif" alt="Sending ..." style="visibility: hidden;">
+      </p>
+      <div class="wpcf7-response-output wpcf7-display-none">
       </div>
-      <div class="col-sm">
-
-      </div>
-          </div>
-  </div>
+  </form>
+</div>
 
 
 {% endblock %}

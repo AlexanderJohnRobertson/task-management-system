@@ -19,6 +19,7 @@ table caption {
 table tr {
   background-color: #3c3f3f;
   border: 1px solid #fba600;
+  width: 100%;
   padding: .35em;
 }
 
@@ -27,6 +28,7 @@ table td {
   padding: .625em;
   text-align: left;
     color: #ff8900;
+  width: 100rem;
     border: 1px solid #fd8800;
     border-color: #ff8900;
 }
@@ -35,6 +37,7 @@ table th {
   font-size: .85em;
   letter-spacing: .1em;
   text-transform: uppercase;
+   width: 100rem;
     border: 1px solid #fba600;
     border-color: #ff8900;
 }
@@ -74,6 +77,7 @@ table th {
     border-bottom: 3px solid #fda700;
     display: block;
     margin-bottom: .625em;
+    width: 100%;
   }
 
   table td {
@@ -81,6 +85,7 @@ table th {
     display: block;
     font-size: .8em;
     text-align: right;
+    width: 100%;
   }
 
   table td::before {

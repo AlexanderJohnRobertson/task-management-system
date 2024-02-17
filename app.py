@@ -889,86 +889,72 @@ def updateAccountDetails():
 
 @app.route('/testpage' , methods=['GET', 'POST'])
 def testpage():
-    try:
-        cookie = request.cookies.get('userID')
-        print("Cookie", cookie)
-        database = r"database.db"
-        conn = None
-        conn = sqlite3.connect(database)
-        cur = conn.cursor()
-        cur.execute('SELECT * FROM users WHERE username = ?', (cookie,))
-        user = cur.fetchall()
-        cur.close()
-        if not user:
-            return render_template('accessdenied.html')
-    except IndexError:
-        flash('Error')
+    cookie = request.cookies.get('userID')
+    print("Cookie", cookie)
+    database = r"database.db"
+    conn = None
+    conn = sqlite3.connect(database)
+    cur = conn.cursor()
+    cur.execute('SELECT * FROM users WHERE username = ?', (cookie,))
+    user = cur.fetchall()
+    cur.close()
+    print("User: ", user)
+    if not user:
+        return render_template('accessdenied.html')
     if request.method == 'POST':
-        taskid = request.form['taskid']
-        title = request.form['title']
-        # description = request.form['description']
-        duedate = request.form['duedate']
-        priority = request.form['priority']
-        status = request.form['status']
-        projectid = request.form['projectid']
-        description = request.form.get('description')
-        print(taskid)
-        print(title)
-        print(description)
-        print(duedate)
-        print(priority)
-        print(status)
-        print(projectid)
-        if not taskid:
-            flash('Task ID is required!')
-        elif not title:
-            flash('Title is required!')
-        elif not description:
-            flash('Description is required!')
-        elif not duedate:
-            flash('Due Date is required!')
-        elif not priority:
-            flash('Priority is required!')
-        elif not status:
-            flash('Status is required!')
-        elif not projectid:
-            flash('Project ID is required!')
-        elif priority != 'High' and priority != 'Medium' and priority != 'Low':
-            flash('Priority must be High, Medium, or Low!')
-        elif status != 'Planned' and status != 'In Progress' and status != 'Completed' and status != 'Overdue' and status != 'Cancelled' and status != 'Not Started':
-            flash('Status must be Not Started, Planned, In Progress, Completed, Overdue or Cancelled!')
+        username = request.form['username']
+        password = request.form['password']
+        firstName = request.form['updateFirstName']
+        lastName = request.form['updateLastName']
+        email = request.form['updateEmail']
+        phoneNumber = request.form['updatePhoneNumber']
+        print(username)
+        print(password)
+        print(firstName)
+        print(lastName)
+        print(email)
+        print(phoneNumber)
+        if not username:
+            flash('Username is required!')
+        elif not firstName:
+            flash('First Name is required!')
+        elif not lastName:
+            flash('Last Name is required!')
+        elif not email:
+            flash('Email is required!')
+        elif not phoneNumber:
+            flash('Phone Number is required!')
+        elif not password:
+            flash('Password is required!')
         else:
             try:
                 database = r"database.db"
                 conn = None
                 conn = sqlite3.connect(database)
                 cur = conn.cursor()
-                cur.execute('SELECT * FROM tasks WHERE taskID = ?', (taskid,))
-                task = cur.fetchall()
-                cur.execute('SELECT * FROM projects WHERE projectID = ?', (projectid,))
-                project = cur.fetchall()
                 cur.execute('SELECT * FROM users WHERE username = ?', (cookie,))
                 user = cur.fetchall()
-                if task:
-                    flash('Task ID already exists!')
-                elif not project:
-                    flash('Project ID does not exist!')
-                elif not user:
-                    return render_template('accessdenied.html')
+                tupleUser = user[0]
+                if not user:
+                    flash('User does not exist!')
+                elif username != cookie:
+                    flash('New Your username does not match your current username!')
+                elif password != tupleUser[1]:
+                    flash('Password is incorrect!')
                 else:
-                    cur.execute('INSERT INTO tasks VALUES(?, ?, ?, ?, ?, ?, ?)',
-                                (taskid, title, description, duedate, priority, status, projectid))
+                    cur.execute('UPDATE users SET forename = ?, surname = ?, email = ?, phone = ? WHERE username = ?',
+                                (firstName, lastName, email, phoneNumber, cookie,))
                     conn.commit()
                     cur.close()
-                    # flash ('Task added successfully!')
-                    return redirect(url_for('viewtasks'))
+                    flash('Account details updated successfully!')
+                    return redirect(url_for('userhome'))
             except IndexError:
-                flash('Error adding task!')
+                flash('Error changing!')
             except IntegrityError:
-                flash('Task ID already exists!')
-            except OperationalError:
-                flash('Database locked.')
-                return redirect(url_for('testpage'))
+                flash('User already exists!')
+            # except OperationalError:
+            # flash('Database locked.')
+            # return redirect(url_for('updatetask'))
     return render_template('testpage.html')
 
 if __name__ == '__main__':
