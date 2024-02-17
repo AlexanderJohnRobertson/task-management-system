@@ -213,7 +213,7 @@ def readcookie():
 def addtask():
     try:
         cookie = request.cookies.get('userID')
-        print("Cookie", cookie)
+        #print("Cookie", cookie)
         database = r"database.db"
         conn = None
         conn = sqlite3.connect(database)
@@ -234,13 +234,13 @@ def addtask():
         status = request.form['status']
         projectid = request.form['projectid']
         description = request.form.get('description')
-        print(taskid)
-        print(title)
-        print(description)
-        print(duedate)
-        print(priority)
-        print(status)
-        print(projectid)
+        #print(taskid)
+        #print(title)
+        #print(description)
+        #print(duedate)
+        #print(priority)
+        #print(status)
+        #print(projectid)
         if not taskid:
             flash('Task ID is required!')
         elif not title:
@@ -289,8 +289,8 @@ def addtask():
                 flash('Task ID already exists!')
             except OperationalError:
                 flash('Database locked.')
-                return redirect(url_for('testpage'))
-    return render_template('testpage.html')
+                return redirect(url_for('addtask'))
+    return render_template('addtask.html')
 
 @app.route('/updatetask', methods=['POST', 'GET'])
 def updatetask():
