@@ -117,7 +117,7 @@ def createaccount():
                         #return redirect(url_for('userhome', globalUsername=username))
             except IndexError:
                 flash('Username or Password is incorrect!')
-    return render_template('createaccount.html')
+    return render_template('testpage.html')
 
 @app.route('/userhome/', methods=['GET', 'POST'])
 def userhome():
