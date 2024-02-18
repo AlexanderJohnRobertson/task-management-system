@@ -1,118 +1,59 @@
+<head>
+  <link rel="stylesheet" href="/static/createaccountloginformstyle.css  ">
+   <link rel="stylesheet" href="/static/formstyle.css  ">
+</head>
 {% extends 'base3.html' %}
 
 {% block content %}
-  <div class="container">
-    <div class="row"></div>
-    <div class="col-sm">
-        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+<h2>Create Account</h2>
+<form method="post">
+  <section1 class="section1 left">
+    <div class="input-container">
+             <label class="text1">First Name</label>
+             <input type="text" id="firstname" name="firstname" placeholder="First Name">
+          </div>
+    <div class="input-container">
+      <label for="lastname." required>Last Name</label>
+      <input type="text" id="lastname" name="lastname" placeholder="Last Name" />
+    </div>
+    <div class="input-container">
+      <label for="username.">Username</label>
+      <input type="text" id="username" name="username" placeholder="Username" />
+    </div>
+    <div class="input-container">
+      <label for="email.">Email Address</label>
+      <input type="email" id="email" name="email" placeholder="Email Address" />
+    </div>
+    <div class="input-container">
+      <label for="phone.">Phone Number</label>
+      <input type="number" id="phonenumber" name="phonenumber" placeholder="Phone Number" />
+    </div>
+    <div class="input-container">
+      <label for="password.">Password</label>
+      <input type="password" id="password" name="password" placeholder="Password" />
+    </div>
+    <div class="input-container">
+      <label for="confirmpassword.">Confirm Password</label>
+      <input type="password" id="confirmPassword" name="confirmPassword" placeholder="Confirm Password" />
+    </div>
+
+  </section1>
+  <section1 class="section1 right">
+    <div class="input-container">
+      <img src="/static/createaccount.png" width="250" height="350">
+    </div>
+    </section1>
+  <div class="send-container">
+    <button type="submit" class="btn transparent">Create Account</button>
     <br>
-    </div>
-    <div class="col-sm">
-        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
     <br>
-    </div>
-    <div class="col-sm">
-        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
     <br>
-    </div>
-    <div class="col-sm">
-        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
     <br>
-    </div>
-    <div class="row">
-        <div class="col-sm">
-        &nbsp;&nbsp;
-        </div>
-        <div class="col-sm">
-
-            <h1 class="heading1">{% block title %} Create Account {% endblock %}</h1>
-            <form method="post">
-
-                    <label for="firstname" class="text1">First Name:</label>
-                    <br>
-                    <input type="text" name="firstname"
-                           placeholder="First Name"
-                           value="{{ request.form['firstname'] }}">
-                    </input>
-                    <br>
-
-                    <label for="lastname" class="text1">Last Name</label>
-                    <br>
-                    <input type="text" name="lastname"
-                        placeholder="Last Name"
-                        value="{{ request.form['lastname'] }}">
-                    </input>
-                    <br>
-
-                    <label for="username" class="text1">Username</label>
-                    <br>
-                    <input type="text" name="username"
-                        placeholder="Username"
-                        value="{{ request.form['username'] }}">
-                    </input>
-                    <br>
-
-                    <label for="email" class="text1">Email Address</label>
-                    <br>
-                    <input type="email" name="email"
-                        placeholder="Email Address"
-                        value="{{ request.form['email'] }}">
-                    </input>
-                    <br>
-
-                    <label for="phonenumber" class="text1">Phone Number</label>
-                    <br>
-                    <input type="number" name="phonenumber"
-                        placeholder="Phone Number"
-                        value="{{ request.form['phonenumber'] }}">
-                    </input>
-                    <br>
-
-                    <label for="password" class="text1">Password</label>
-                    <br>
-                    <input type="password" name="password"
-                        placeholder="Password"
-                        value="{{ request.form['password'] }}">
-                    </input>
-                    <br>
-
-                    <label for="password" class="text1">Confirm Password</label>
-                    <br>
-                    <input type="password" name="confirmPassword"
-                        placeholder="Confirm Password"
-                        value="{{ request.form['confirmPassword'] }}">
-                    </input>
-                    <br>
-                    <br>
-                    <button type="submit" class="btn transparent">Submit</button>
-            </form>
-        </div>
-        <div class="col-sm">
-
-        </div>
-            <div class="col-sm">
-                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-        </div>
-    </div>
-    <div class="row">
-        <div class="col-sm">
-            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
     <br>
-    </div>
-    <div class="col-sm">
-        &nbsp;&nbsp;
-        <img src="/static/createaccount.png" width="250" height="350">
     <br>
-    </div>
-    <div class="col-sm">
-        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
     <br>
-    </div>
-    <div class="col-sm">
-        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-    <br>
-    </div>
-    </div>
-  </div>
+   </div>
+
+</form>
 
 {% endblock %}
