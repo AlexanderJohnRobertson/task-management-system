@@ -902,7 +902,7 @@ def updateAccountDetails():
                 cur.execute('SELECT * FROM users WHERE username = ?', (cookie,)) #querying the database to check if the username exists
                 user = cur.fetchall()
                 tupleUser = user[0]
-                print(tupleUser[1])
+                print(tupleUser[1]  )
                 if not user: #if the username does not exist flash an error message
                     flash('User does not exist!')
                 elif username != cookie:
@@ -925,6 +925,11 @@ def updateAccountDetails():
 def testpage():
     '''This is a test page for testing purposes.'''
     return render_template('testpage.html')
+
+@app.route('/testpage2')
+def testpage2():
+    '''This is a test page for testing purposes.'''
+    return render_template('testpage2.html')
 
 if __name__ == '__main__':
     '''This is the main function that runs the application.'''
