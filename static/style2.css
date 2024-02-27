@@ -556,3 +556,8 @@ section {
         background-color: #ff8900; /* Green */
         color: white;
         }
+
+        .heading1 {
+            font-size: 30px;
+            color: #ff0000;
+        }
