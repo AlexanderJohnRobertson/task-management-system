@@ -1,0 +1,41 @@
+<head>
+    <link rel="stylesheet" href="/static/tablestyle.css">
+</head>
+
+{% extends 'base4.html' %}
+
+{% block content %}
+<div class="table-container">
+  <table>
+  <caption>View Users</caption>
+  <thead>
+    <tr>
+      <th scope="col">Username</th>
+      <th scope="col">First Name</th>
+      <th scope="col">Last Name</th>
+      <th scope="col">Email Address</th>
+        <th scope="col">Phone Number</th>
+        <th scope="col">Account Type</th>
+        <th scope="col">Blocked</th>
+    </tr>
+  </thead>
+  <tbody>
+
+
+  {% for row in data1 %}
+    <tr>
+      <td data-label="Username">{{ row[0] }}</td>
+      <td data-label="First Name">{{ row[1] }}</td>
+      <td data-label="Last Name">{{ row[2] }}</td>
+      <td data-label="Email Address">{{ row[3] }}</td>
+        <td data-label="Phone Number">{{ row[4] }}</td>
+        <td data-label="Account Type">{{ row[5] }}</td>
+        <td data-label="Blocked">{{ row[6] }}</td>
+
+    </tr>
+  {% endfor %}
+  </tbody>
+</table>
+  </div>
+
+{% endblock %}

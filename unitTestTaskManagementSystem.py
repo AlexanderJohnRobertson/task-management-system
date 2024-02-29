@@ -1,6 +1,8 @@
 import unittest
 from app import app
 
+'''Unit test for the Task Management System'''
+
 class TestRoutes(unittest.TestCase):
     def setUp(self):
         self.app = app.test_client()
@@ -85,10 +87,26 @@ class TestRoutes(unittest.TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertIn(b'', response.data)
 
-    def test_user_home(self):
-        response = self.app.get('userhome/')
+    def test_view_users(self):
+        response = self.app.get('viewusers')
         self.assertEqual(response.status_code, 200)
-        self.assertIn(b'', response.data)
+        self.assertIn(b'Access Denied', response.data)
+
+    def test_delete_user(self):
+        response = self.app.get('deleteuser')
+        self.assertEqual(response.status_code, 200)
+        self.assertIn(b'Access Denied', response.data)
+
+    def test_block_user(self):
+        response = self.app.get('blockuser')
+        self.assertEqual(response.status_code, 200)
+        self.assertIn(b'Access Denied', response.data)
+
+    def test_unblock_user(self):
+        response = self.app.get('unblockuser')
+        self.assertEqual(response.status_code, 200)
+        self.assertIn(b'Access Denied', response.data)
+
 
 
 

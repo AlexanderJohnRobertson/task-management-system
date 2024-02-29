@@ -63,7 +63,7 @@ def login():
         elif not password:
             flash('Password is required!')
         else:
-
+            #failedLoginAttempts = 0
             try:
                 for i in range(10): #password hashing encryption
                         password = hashlib.sha3_512(password.encode('utf-8'))
@@ -80,20 +80,94 @@ def login():
                 User = user[0]
                 Uname = User[0]
                 Pword = User[1]
+                blocked = User[7]
+                failedLoginAttempts = User[8]
                 if Uname == username and Pword == password: #if the username and password are correct
-                    global_var(Uname)
-                    print(globalUsername)
-                    user = Uname
-                    resp = make_response(render_template('readcookie.html'))
-                    resp.set_cookie('userID', user) #setting the cookie connected to the username
-                    return resp
+                    if blocked == "Yes": #if the user is blocked flash an error message
+                        flash('You have been blocked.  Please contact the administrator.')
+                    elif failedLoginAttempts >= 3: #if the user has had 3 failed login attempts flash an error message
+                        blocked = "Yes"
+                        database = r"database.db" #database file
+                        conn = None
+                        conn = sqlite3.connect(database)
+                        cur = conn.cursor()
+                        cur.execute('UPDATE users SET blocked = ? WHERE username = ?', (blocked, username,))
+                        conn.commit()
+                        cur.close()
+                    else:
+                        global_var(Uname)
+                        print(globalUsername)
+                        database = r"database.db" #database file
+                        conn = None
+                        conn = sqlite3.connect(database) #connecting to the database
+                        cur = conn.cursor()
+                        cur.execute('UPDATE users SET failedLoginAttempt = ? WHERE username = ?', (0, username,))
+                        conn.commit()
+                        cur.close()
+                        user = Uname
+                        resp = make_response(render_template('readcookie.html'))
+                        resp.set_cookie('userID', user) #setting the cookie connected to the username
+                        return resp
                 else: #if the username and password are incorrect flash an error message
                     # globalAttempt = global_var2(globalAttempt)
+
+                    database = r"database.db"  # database file
+                    conn = None
+                    conn = sqlite3.connect(database)  # connecting to the database
+                    cur = conn.cursor()
+                    cur.execute('SELECT failedLoginattempt FROM users WHERE username = ?',
+                                (username,))  # querying the database
+                    failedLoginAttempts = cur.fetchall()
+                    failedLoginAttempts = failedLoginAttempts[0][0]
+                    print(failedLoginAttempts)
+                    print(type(failedLoginAttempts))
+                    failedLoginAttempts = failedLoginAttempts + 1
+                    print(failedLoginAttempts)
+                    cur.execute('UPDATE users SET failedLoginAttempt = ? WHERE username = ?',
+                                (failedLoginAttempts, username,))
+                    conn.commit()
+                    cur.close()
+                    if failedLoginAttempts >= 3:
+                        blocked = "Yes"
+                        database = r"database.db"
+                        conn = None
+                        conn = sqlite3.connect(database)
+                        cur = conn.cursor()
+                        cur.execute('UPDATE users SET blocked = ? WHERE username = ?', (blocked, username,))
+                        conn.commit()
+                        cur.close()
+                        flash(
+                            'You have been blocked because you entered the wrong password too many times. Please contact the administrator.')
                     flash('Username or Password is incorrect!')
+
                     # print(globalAttempt)
             except IndexError: #if there is an error caused by incorrect login details flash an error message
-                # globalAttempt = global_var2(globalAttempt)
-
+                database = r"database.db"  # database file
+                conn = None
+                conn = sqlite3.connect(database)  # connecting to the database
+                cur = conn.cursor()
+                cur.execute('SELECT failedLoginattempt FROM users WHERE username = ?',
+                            (username,))  # querying the database
+                failedLoginAttempts = cur.fetchall()
+                failedLoginAttempts = failedLoginAttempts[0][0]
+                print(failedLoginAttempts)
+                print(type(failedLoginAttempts))
+                failedLoginAttempts = failedLoginAttempts + 1
+                print(failedLoginAttempts)
+                cur.execute('UPDATE users SET failedLoginAttempt = ? WHERE username = ?',
+                            (failedLoginAttempts, username,))
+                conn.commit()
+                cur.close()
+                if failedLoginAttempts >= 3:
+                    blocked = "Yes"
+                    database = r"database.db"
+                    conn = None
+                    conn = sqlite3.connect(database)
+                    cur = conn.cursor()
+                    cur.execute('UPDATE users SET blocked = ? WHERE username = ?', (blocked, username,))
+                    conn.commit()
+                    cur.close()
+                    flash('You have been blocked because you entered the wrong password too many times. Please contact the administrator.')
                 flash('Username or Password is incorrect!')
                 # print(globalAttempt)
     return render_template('login.html') #render the login.html page
@@ -110,6 +184,8 @@ def createaccount():
         email = request.form['email']
         phonenumber = request.form['phonenumber']
         accountType = "Standard" #set the account type to standard
+        blocked = "No" #set the blocked status to no
+        failedLoginAttempts = 0
         checkLowercase = re.search(r'[a-z]', password) #use regular expressions to validate the password
         checkUppercase = re.search(r'[A-Z]', password)
         checkNumber = re.search(r'[0-9]', password)
@@ -174,7 +250,7 @@ def createaccount():
                             password = hashlib.sha3_512(password.encode('utf-8'))
                             password = password.hexdigest()
                         cur = conn.cursor()
-                        cur.execute('INSERT INTO users VALUES(?, ?, ?, ?, ?, ?, ?)', (username, password, firstname, lastname, email, phonenumber, accountType)) #inserting the user details into the database
+                        cur.execute('INSERT INTO users VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?)', (username, password, firstname, lastname, email, phonenumber, accountType, blocked, failedLoginAttempts)) #inserting the user details into the database
                         conn.commit()
                         cur.close()
                         resp = make_response(render_template('readcookie.html')) #setting the cookie connected to the username
@@ -920,6 +996,245 @@ def updateAccountDetails():
             except IntegrityError:
                 flash('User already exists!') #if the user already exists flash an error message
     return render_template('updateaccountdetails.html') #render the updateaccountdetails.html page
+
+@app.route('/viewusers' , methods=['GET', 'POST'])
+def viewUsers():
+    '''This function allows the user to view their account details.'''
+    try:
+        cookie = request.cookies.get('userID') #get the cookie
+        database = r"database.db" #database file
+        conn = None
+        conn = sqlite3.connect(database) #connecting to the database
+        cur = conn.cursor()
+        cur.execute('SELECT * FROM users WHERE username = ?', (cookie,)) #querying the database to check if the user exists
+        user = cur.fetchall()
+        cur.close()
+        if not user:
+            return render_template('accessdenied.html')
+        tupleUser = user[0]
+        userType = tupleUser[6]
+        if userType != "Administrator":  # if the user is not an administrator deny access
+            return render_template('adminrequiredusers.html')
+        # deny access if the user does not exist
+    except IndexError:
+        flash('Error')
+    database = r"database.db" #database file
+    conn = None
+    try:
+        conn = sqlite3.connect(database) #connecting to the database
+    except Error as e:
+        print(e)
+    cur = conn.cursor()
+    cur.execute("SELECT username, forename, surname, email, phone, usertype, blocked, failedLoginAttempt FROM users") #selecting the user details from the database
+    data = cur.fetchall()
+    print("Data: ", data)
+
+    #tupleData = data[0],data[2],data[3],data[4],data[5],data[6] #get the user details
+    #print("Tuple Data: ", tupleData)
+    #data = []
+    #data.append(tupleData)
+    print("Data: ", data)
+
+    #return jsonify(data)
+    return render_template('viewusers.html', data1=data) #render the accountdetails.html page
+
+@app.route('/blockuser', methods=['POST', 'GET'])
+def blockUser():
+    '''This function allows the user to block a user.'''
+    cookie = request.cookies.get('userID')  # get the cookie
+    database = r"database.db"
+    conn = None
+    conn = sqlite3.connect(database)  # connecting to the database
+    cur = conn.cursor()
+    cur.execute('SELECT * FROM users WHERE username = ?',
+                (cookie,))  # querying the database to check if the user exists
+    user = cur.fetchall()
+    cur.close()
+    if not user:  # deny access if the user does not exist
+        return render_template('accessdenied.html')  # deny access if the user does not exist
+    tupleUser = user[0]
+    userType = tupleUser[6]
+    if userType != "Administrator":  # if the user is not an administrator deny access
+        return render_template('adminrequiredusers.html')
+    if request.method == 'POST':  # get form details
+        username = request.form['username']
+        if not username:  # validate the form details
+            flash('Username is required!')
+        elif username == cookie:
+            flash('You cannot block yourself!')
+        else:
+            try:
+                database = r"database.db"  # database file
+                conn = None
+                conn = sqlite3.connect(database)  # connecting to the database
+                cur = conn.cursor()
+                cur.execute('SELECT * FROM users WHERE username = ?',(username,))  # querying the database to check if the username exists
+                user = cur.fetchall()
+                tupleUser = user[0]
+                userBlocked = tupleUser[7]
+                if not user:
+                    flash('User does not exist!')
+                elif userBlocked == "Yes":
+                    flash('User is already blocked!')
+                else:
+                    blocked = "Yes"
+                    cur.execute('UPDATE users SET blocked = ? WHERE username = ?', (blocked, username)) #updating the user details in the database
+                    conn.commit()
+                    cur.close()
+                    flash('User blocked successfully!')  # flash a success message
+                    return redirect(url_for('viewUsers'))  # redirect to the index page and log the user out after deleting the account
+            except IndexError:
+                flash('User does not exist!')
+            except IntegrityError:
+                flash('User already exists!')
+    return render_template('blockuser.html')
+
+@app.route('/unblockuser', methods=['POST', 'GET'])
+def unblockUser():
+    '''This function allows the user to unblock a user.'''
+    cookie = request.cookies.get('userID')
+    database = r"database.db"
+    conn = None
+    conn = sqlite3.connect(database)
+    cur = conn.cursor()
+    cur.execute('SELECT * FROM users WHERE username = ?', (cookie,))
+    user = cur.fetchall()
+    cur.close()
+    if not user:
+        return render_template('accessdenied.html')
+    tupleUser = user[0]
+    userType = tupleUser[6]
+    if userType != "Administrator":
+        return render_template('adminrequiredusers.html')
+    if request.method == 'POST':
+        username = request.form['username']
+        if not username:
+            flash('Username is required!')
+        else:
+            try:
+                database = r"database.db"
+                conn = None
+                conn = sqlite3.connect(database)
+                cur = conn.cursor()
+                cur.execute('SELECT * FROM users WHERE username = ?', (username,))
+                user = cur.fetchall()
+                tupleUser = user[0]
+                userBlocked = tupleUser[7]
+                if not user:
+                    flash('User does not exist!')
+                elif userBlocked == "No":
+                    flash('User is not blocked!')
+                else:
+                    blocked = "No"
+                    failedLoginAttempts = 0
+                    cur.execute('UPDATE users SET blocked = ?, failedLoginAttempt = ? WHERE username = ?', (blocked, failedLoginAttempts, username))
+                    conn.commit()
+                    cur.close()
+                    flash('User unblocked successfully!')
+                    return redirect(url_for('viewUsers'))
+            except IndexError:
+                flash('User does not exist!')
+            except IntegrityError:
+                flash('User already exists!')
+    return render_template('unblockuser.html')
+
+@app.route('/deleteuser', methods=['POST', 'GET'])
+def deleteUser():
+    '''This function allows the user to delete a user.'''
+    cookie = request.cookies.get('userID')
+    database = r"database.db"
+    conn = None
+    conn = sqlite3.connect(database)
+    cur = conn.cursor()
+    cur.execute('SELECT * FROM users WHERE username = ?', (cookie,))
+    user = cur.fetchall()
+    cur.close()
+    if not user:
+        return render_template('accessdenied.html')
+    tupleUser = user[0]
+    userType = tupleUser[6]
+    if userType != "Administrator":
+        return render_template('adminrequiredusers.html')
+    if tupleUser[0] == cookie:
+        flash('You cannot delete yourself here. Please use the delete account page!')
+    if request.method == 'POST':
+        username = request.form['username']
+        if not username:
+            flash('Username is required!')
+        elif username == cookie:
+            flash('You cannot delete yourself!')
+        else:
+            try:
+                database = r"database.db"
+                conn = None
+                conn = sqlite3.connect(database)
+                cur = conn.cursor()
+                cur.execute('SELECT * FROM users WHERE username = ?', (username,))
+                user = cur.fetchall()
+                if not user:
+                    flash('User does not exist!')
+                else:
+                    cur.execute('DELETE FROM users WHERE username = ?', (username,))
+                    conn.commit()
+                    cur.close()
+                    flash('User deleted successfully!')
+                    return redirect(url_for('viewUsers'))
+            except IndexError:
+                flash('User does not exist!')
+            except IntegrityError:
+                flash('User already exists!')
+    return render_template('deleteuser.html')
+
+@app.route('/changeaccounttype', methods=['POST', 'GET'])
+def changeAccountType():
+    '''This function allows the user to change the account type of a user.'''
+    cookie = request.cookies.get('userID')
+    database = r"database.db"
+    conn = None
+    conn = sqlite3.connect(database)
+    cur = conn.cursor()
+    cur.execute('SELECT * FROM users WHERE username = ?', (cookie,))
+    user = cur.fetchall()
+    cur.close()
+    if not user:
+        return render_template('accessdenied.html')
+    tupleUser = user[0]
+    userType = tupleUser[6]
+    if userType != "Administrator":
+        return render_template('adminrequiredusers.html')
+    if request.method == 'POST':
+        username = request.form['username']
+        accountType = request.form['accountType']
+        if not username:
+            flash('Username is required!')
+        elif not accountType:
+            flash('Account Type is required!')
+        elif username == cookie:
+            flash('You cannot change your own account type!')
+        elif accountType != "Administrator" and accountType != "Standard":
+            flash('Account Type must be Administrator or Standard (Case Sensitive)!')
+        else:
+            try:
+                database = r"database.db"
+                conn = None
+                conn = sqlite3.connect(database)
+                cur = conn.cursor()
+                cur.execute('SELECT * FROM users WHERE username = ?', (username,))
+                user = cur.fetchall()
+                if not user:
+                    flash('User does not exist!')
+                else:
+                    cur.execute('UPDATE users SET usertype = ? WHERE username = ?', (accountType, username))
+                    conn.commit()
+                    cur.close()
+                    flash('Account type changed successfully!')
+                    return redirect(url_for('viewUsers'))
+            except IndexError:
+                flash('User does not exist!')
+            except IntegrityError:
+                flash('User already exists!')
+    return render_template('changeaccounttype.html')
+
 
 @app.route('/testpage' , methods=['GET', 'POST'])
 def testpage():

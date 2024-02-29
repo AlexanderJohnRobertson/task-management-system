@@ -55,3 +55,23 @@
     function updateAccountDetails() {
     location.replace("/updateaccountdetails")
     }
+
+    function viewUsers() {
+    location.replace("/viewusers")
+    }
+
+    function blockUser() {
+      location.replace("/blockuser")
+    }
+
+    function unblockUser() {
+      location.replace("/unblockuser")
+    }
+
+    function deleteUser() {
+      location.replace("/deleteuser")
+    }
+
+    function changeAccountType() {
+      location.replace("/changeaccounttype")
+    }
