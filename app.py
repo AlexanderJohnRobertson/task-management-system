@@ -16,6 +16,7 @@ import sqlite3
 from sqlite3 import Error, IntegrityError, OperationalError
 import hashlib
 import re
+import smtplib
 
 
 app = Flask(__name__) #creating the Flask application
@@ -39,6 +40,19 @@ def global_var2():
                     "000000", "1q2w3e", "aa12345678", "abc123", "password1", " 	1234", "qwertyuiop", "123321", "password123"]
     return commonPasswords
 
+def email(emailAddress, unencryptedPassword):
+    '''This function sends an email to the user with their new password.'''
+    server = smtplib.SMTP('smtp-mail.outlook.com', 587) #setting up the email server
+    server.starttls() #starting the email server
+    server.login("taskmanagementsystem@hotmail.com", "Python.303") #logging into the email server
+    message = """\
+Subject: Task Management System
+
+Your password has been reset.  Your new password is: """ + unencryptedPassword
+    print("Email sent", emailAddress, message)
+    server.sendmail("taskmanagementsystem@hotmail.com", emailAddress, message)
+    print("Email sent") #printing a message to the console
+    server.quit() #quitting the email server
 
 
 @app.route('/', methods=['GET', 'POST'])
@@ -1234,6 +1248,82 @@ def changeAccountType():
             except IntegrityError:
                 flash('User already exists!')
     return render_template('changeaccounttype.html')
+
+@app.route('/changeuserpassword' , methods=['GET', 'POST'])
+def changeUserPassword():
+    '''This function allows the user to change the password of a user.'''
+    cookie = request.cookies.get('userID')
+    database = r"database.db"
+    conn = None
+    conn = sqlite3.connect(database)
+    cur = conn.cursor()
+    cur.execute('SELECT * FROM users WHERE username = ?', (cookie,))
+    user = cur.fetchall()
+    cur.close()
+    if not user:
+        return render_template('accessdenied.html')
+    tupleUser = user[0]
+    userType = tupleUser[6]
+    if userType != "Administrator":
+        return render_template('adminrequiredusers.html')
+    if request.method == 'POST':
+        username = request.form['username']
+        password = request.form['password']
+        confirmPassword = request.form['confirmPassword']
+        checkLowercase = re.search(r'[a-z]', password)
+        checkUppercase = re.search(r'[A-Z]', password)
+        checkNumber = re.search(r'[0-9]', password)
+        checkSpecialChar = re.search(r'[^A-Za-z0-9]', password)
+        if not username:
+            flash('Username is required!')
+        elif not password:
+            flash('Password is required!')
+        elif not confirmPassword:
+            flash('Confirm New Password is required!')
+        elif password != confirmPassword:
+            flash('New Password and Confirm New Password do not match!')
+        elif not checkLowercase:
+            flash('Password must contain at least one lowercase letter!')
+        elif not checkUppercase:
+            flash('Password must contain at least one uppercase letter!')
+        elif not checkNumber:
+            flash('Password must contain at least one number!')
+        elif not checkSpecialChar:
+            flash('Password must contain at least one special character!')
+        elif len(password) < 10:
+            flash('Password must be at least 10 characters long!')
+        else:
+            try:
+                database = r"database.db"
+                conn = None
+                conn = sqlite3.connect(database)
+                cur = conn.cursor()
+                cur.execute('SELECT * FROM users WHERE username = ?', (username,))
+                user = cur.fetchall()
+                tupleUser = user[0]
+                emailAddress = tupleUser[4]
+                unencryptedPassword = password
+                print("Email Address", emailAddress)
+                if not user:
+                    flash('User does not exist!')
+                else:
+                    try:
+                        for i in range(10):
+                            password = hashlib.sha3_512(password.encode('utf-8'))
+                            password = password.hexdigest()
+                        email(emailAddress, unencryptedPassword)
+                        cur.execute('UPDATE users SET password = ? WHERE username = ?', (password, username))
+                        conn.commit()
+                        cur.close()
+                        flash('Password changed successfully!')
+                        return redirect(url_for('viewUsers'))
+                    except UnicodeEncodeError:
+                        flash('Error sending email. Password contains unsupported characters. Emailing passwords only supports ASCII Characters.')
+            except IndexError:
+                flash('Error changing!')
+            except IntegrityError:
+                flash('User already exists!')
+    return render_template('changeuserpassword.html')
 
 
 @app.route('/testpage' , methods=['GET', 'POST'])

@@ -75,3 +75,7 @@
     function changeAccountType() {
       location.replace("/changeaccounttype")
     }
+
+    function changeUserPassword() {
+      location.replace("/changeuserpassword")
+    }

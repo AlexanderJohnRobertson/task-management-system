@@ -43,7 +43,7 @@ table th {
 }
 
 .table-container {
-  max-width: 65rem;
+  max-width: 100%;
   padding: 0 2rem;
   margin: 0 auto;
   position: relative;

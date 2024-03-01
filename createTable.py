@@ -9,3 +9,15 @@ print('Tasks Table created successfully')
 conn.execute('CREATE TABLE projects(projectID integer(20) primary key not null, title varchar(40) not null, descriptiom text(400) not null, tasks text(400))')
 print('Projects Table created successfully')
 conn.close()
+
+server = smtplib.SMTP('smtp-mail.outlook.com', 587)
+
+server.starttls()
+
+server.login("robertsona97@hotmail.co.uk", "Chinese.101")
+
+server.sendmail("robertsona97@hotmail.co.uk", "s275931@uos.ac.uk", "Hello, this is a test email")
+
+print("Email sent")
+
+Python.303
