@@ -79,3 +79,7 @@
     function changeUserPassword() {
       location.replace("/changeuserpassword")
     }
+
+    function reset() {
+        location.replace("/reset")
+    }

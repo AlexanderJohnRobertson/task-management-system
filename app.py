@@ -40,7 +40,7 @@ def global_var2():
                     "000000", "1q2w3e", "aa12345678", "abc123", "password1", " 	1234", "qwertyuiop", "123321", "password123"]
     return commonPasswords
 
-def email(emailAddress, unencryptedPassword):
+def sendEmail(emailAddress, unencryptedPassword):
     '''This function sends an email to the user with their new password.'''
     server = smtplib.SMTP('smtp-mail.outlook.com', 587) #setting up the email server
     server.starttls() #starting the email server
@@ -54,17 +54,42 @@ Your password has been reset.  Your new password is: """ + unencryptedPassword
     print("Email sent") #printing a message to the console
     server.quit() #quitting the email server
 
+def setupEmail(emailAddress, unencryptedPassword):
+    '''This function sends an email to the user with their new password.'''
+    server = smtplib.SMTP('smtp-mail.outlook.com', 587) #setting up the email server
+    server.starttls() #starting the email server
+    server.login("taskmanagementsystem@hotmail.com", "Python.303") #logging into the email server
+    message = """\
+Subject: Task Management System
+
+Welcome to the Task Management System (first time setup).  Your password is: """ + unencryptedPassword
+    print("Email sent", emailAddress, message)
+    server.sendmail("taskmanagementsystem@hotmail.com", emailAddress, message)
+    print("Email sent") #printing a message to the console
+    server.quit() #quitting the email server
+
 
 @app.route('/', methods=['GET', 'POST'])
 def index():
     '''Main page of the application. This is the first page that the user sees when they visit the website.'''
-    cookie = request.cookies.get('userID') #getting the cookie
-    if cookie != "": #if the cookie is not empty
-        resp = make_response(render_template('logoutcookie.html'))
-        resp.set_cookie('userID', "") #setting the cookie to an empty string
-        return resp
+    rootUser = "Root"  # root user
+    database = r"database.db" #database file
+    conn = None
+    conn = sqlite3.connect(database) #connecting to the database
+    cur = conn.cursor()
+    cur.execute('SELECT * FROM users WHERE username = ?', (rootUser,)) #querying the database
+    root = cur.fetchall()
+    cur.close()
+    if not root:
+        return redirect(url_for('setup')) #if the root user does not exist redirect to the setup page
     else:
-        return render_template('index.html') #rendering the index.html page
+        cookie = request.cookies.get('userID') #getting the cookie
+        if cookie != "": #if the cookie is not empty
+            resp = make_response(render_template('logoutcookie.html'))
+            resp.set_cookie('userID', "") #setting the cookie to an empty string
+            return resp
+        else:
+            return render_template('index.html') #rendering the index.html page
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
@@ -156,34 +181,35 @@ def login():
 
                     # print(globalAttempt)
             except IndexError: #if there is an error caused by incorrect login details flash an error message
-                database = r"database.db"  # database file
-                conn = None
-                conn = sqlite3.connect(database)  # connecting to the database
-                cur = conn.cursor()
-                cur.execute('SELECT failedLoginattempt FROM users WHERE username = ?',
-                            (username,))  # querying the database
-                failedLoginAttempts = cur.fetchall()
-                failedLoginAttempts = failedLoginAttempts[0][0]
-                print(failedLoginAttempts)
-                print(type(failedLoginAttempts))
-                failedLoginAttempts = failedLoginAttempts + 1
-                print(failedLoginAttempts)
-                cur.execute('UPDATE users SET failedLoginAttempt = ? WHERE username = ?',
-                            (failedLoginAttempts, username,))
-                conn.commit()
-                cur.close()
-                if failedLoginAttempts >= 3:
-                    blocked = "Yes"
-                    database = r"database.db"
+                try:
+                    database = r"database.db"  # database file
                     conn = None
-                    conn = sqlite3.connect(database)
+                    conn = sqlite3.connect(database)  # connecting to the database
                     cur = conn.cursor()
-                    cur.execute('UPDATE users SET blocked = ? WHERE username = ?', (blocked, username,))
+                    cur.execute('SELECT failedLoginattempt FROM users WHERE username = ?',(username,))  # querying the database
+                    failedLoginAttempts = cur.fetchall()
+                    failedLoginAttempts = failedLoginAttempts[0][0]
+                    print(failedLoginAttempts)
+                    print(type(failedLoginAttempts))
+                    failedLoginAttempts = failedLoginAttempts + 1
+                    print(failedLoginAttempts)
+                    cur.execute('UPDATE users SET failedLoginAttempt = ? WHERE username = ?',(failedLoginAttempts, username,))
                     conn.commit()
                     cur.close()
-                    flash('You have been blocked because you entered the wrong password too many times. Please contact the administrator.')
-                flash('Username or Password is incorrect!')
-                # print(globalAttempt)
+                    if failedLoginAttempts >= 3:
+                        blocked = "Yes"
+                        database = r"database.db"
+                        conn = None
+                        conn = sqlite3.connect(database)
+                        cur = conn.cursor()
+                        cur.execute('UPDATE users SET blocked = ? WHERE username = ?', (blocked, username,))
+                        conn.commit()
+                        cur.close()
+                        flash('You have been blocked because you entered the wrong password too many times. Please contact the administrator.')
+                    flash('Username or Password is incorrect!')
+                    # print(globalAttempt)
+                except IndexError:
+                    flash('Username does not exist!')
     return render_template('login.html') #render the login.html page
 
 @app.route('/createaccount', methods=['GET', 'POST'])
@@ -748,6 +774,8 @@ def changeUsername():
                     flash('User does not exist!')
                 elif username != cookie:
                     flash('New Your username does not match your current username!')
+                elif username == "Root" and cookie == "Root":
+                    flash('Root username cannot be changed!')
                 elif password != encryptedPassword:
                     flash('Password is incorrect!')
                 else:
@@ -900,6 +928,8 @@ def deleteAccount():
                     flash('User does not exist!')
                 elif username != cookie:
                     flash('New Your username does not match your current username!')
+                elif username == "Root" and cookie == "Root":
+                    flash('Root username cannot be deleted!')
                 elif password != encryptedPassword:
                     flash('Password is incorrect!')
                 else:
@@ -1076,6 +1106,8 @@ def blockUser():
             flash('Username is required!')
         elif username == cookie:
             flash('You cannot block yourself!')
+        elif username == "Root":
+            flash('Root username cannot be blocked!')
         else:
             try:
                 database = r"database.db"  # database file
@@ -1169,14 +1201,14 @@ def deleteUser():
     userType = tupleUser[6]
     if userType != "Administrator":
         return render_template('adminrequiredusers.html')
-    if tupleUser[0] == cookie:
-        flash('You cannot delete yourself here. Please use the delete account page!')
     if request.method == 'POST':
         username = request.form['username']
         if not username:
             flash('Username is required!')
         elif username == cookie:
             flash('You cannot delete yourself!')
+        elif username == "Root":
+            flash('Root username cannot be deleted!')
         else:
             try:
                 database = r"database.db"
@@ -1225,6 +1257,8 @@ def changeAccountType():
             flash('Account Type is required!')
         elif username == cookie:
             flash('You cannot change your own account type!')
+        elif username == "Root":
+            flash('Root username account type cannot be changed!')
         elif accountType != "Administrator" and accountType != "Standard":
             flash('Account Type must be Administrator or Standard (Case Sensitive)!')
         else:
@@ -1311,7 +1345,7 @@ def changeUserPassword():
                         for i in range(10):
                             password = hashlib.sha3_512(password.encode('utf-8'))
                             password = password.hexdigest()
-                        email(emailAddress, unencryptedPassword)
+                        sendEmail(emailAddress, unencryptedPassword)
                         cur.execute('UPDATE users SET password = ? WHERE username = ?', (password, username))
                         conn.commit()
                         cur.close()
@@ -1325,6 +1359,150 @@ def changeUserPassword():
                 flash('User already exists!')
     return render_template('changeuserpassword.html')
 
+@app.route('/setup', methods=['POST', 'GET'])
+def setup():
+    '''This function creates root user during setup.'''
+    if request.method == 'POST':  # get form details
+        username = "Root"
+        password = request.form['password']
+        confirmPassword = request.form['confirmPassword']
+        firstname = request.form['firstname']
+        lastname = request.form['lastname']
+        email = request.form['email']
+        phonenumber = request.form['phonenumber']
+        accountType = "Administrator"  # set the account type to administrator
+        blocked = "No"  # set the blocked status to no
+        failedLoginAttempts = 0
+        checkLowercase = re.search(r'[a-z]', password)  # use regular expressions to validate the password
+        checkUppercase = re.search(r'[A-Z]', password)
+        checkNumber = re.search(r'[0-9]', password)
+        checkSpecialChar = re.search(r'[^A-Za-z0-9]', password)
+        if not firstname:  # validate the form details
+            flash('First Name is required!')
+        elif not lastname:
+            flash('Last Name is required!')
+        elif not email:
+            flash('Email Address is required!')
+        elif not phonenumber:
+            flash('Phone Number is required!')
+        elif not username:
+            flash('Username is required!')
+        elif not password:
+            flash('Password is required!')
+        elif not confirmPassword:
+            flash('Confirm Password is required!')
+        elif not checkLowercase:  # validate the password
+            flash('Password must contain at least one lowercase letter!')
+        elif not checkUppercase:
+            flash('Password must contain at least one uppercase letter!')
+        elif not checkNumber:
+            flash('Password must contain at least one number!')
+        elif not checkSpecialChar:
+            flash('Password must contain at least one special character!')
+        elif len(password) < 10:  # minimum password length is 10 characters
+            flash('Password must be at least 10 characters long!')
+        elif password == "Root":
+            flash('Password cannot be the same as the username!')
+        elif password == firstname:
+            flash('Password cannot be the same as the first name!')
+        elif password == lastname:
+            flash('Password cannot be the same as the last name!')
+        elif password == email:
+            flash('Password cannot be the same as the email!')
+        elif password == phonenumber:
+            flash('Password cannot be the same as the phone number!')
+        elif password in global_var2():  # if the password is in the common passwords list flash an error message
+            print(global_var2())
+            flash('Password is too common!')
+        else:
+            try:
+                database = r"database.db"  # database file
+                conn = None
+                conn = sqlite3.connect(database)  # connecting to the database
+                cur = conn.cursor()
+                # cur = mysql.connection.cursor()
+                # cur.execute('SELECT * FROM users WHERE username = %s AND password = %s', (username, password))
+                cur.execute('SELECT * FROM users WHERE username = ?', (username,))  # querying the database
+                user = cur.fetchall()
+                cur.close()
+                if user:  # if the username already exists flash an error message
+                    flash('Username already exists!')
+                else:
+                    if password != confirmPassword:  # if the password and confirm password do not match flash an error message
+                        flash('Passwords do not match!')
+                    else:
+                        try:
+                            unencryptedPassword = password
+                            for i in range(10):  # password hashing encryption
+                                password = hashlib.sha3_512(password.encode('utf-8'))
+                                password = password.hexdigest()
+                            setupEmail(email, unencryptedPassword)  # send an email to the user with the password
+                            cur = conn.cursor()
+                            cur.execute('INSERT INTO users VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?)', (
+                            username, password, firstname, lastname, email, phonenumber, accountType, blocked,
+                            failedLoginAttempts))  # inserting the user details into the database
+                            conn.commit()
+                            cur.close()
+                            resp = make_response(render_template('readcookie.html'))  # setting the cookie connected to the username
+                            resp.set_cookie('userID', username)
+                            return resp
+                        except UnicodeEncodeError:
+                            flash('Error sending email. Password contains unsupported characters. Emailing passwords only supports ASCII Characters.')
+            except IndexError:  # if there is an error caused by incorrect login details flash an error message
+                flash('Username or Password is incorrect!')
+    return render_template('setup.html')
+
+@app.route('/reset', methods=['POST', 'GET'])
+def reset():
+    '''This function resets the database.'''
+    '''This function allows the user to change the password of a user.'''
+    cookie = request.cookies.get('userID')
+    database = r"database.db"
+    conn = None
+    conn = sqlite3.connect(database)
+    cur = conn.cursor()
+    cur.execute('SELECT * FROM users WHERE username = ?', (cookie,))
+    user = cur.fetchall()
+    cur.close()
+    if not user:
+        return render_template('accessdenied.html')
+    tupleUser = user[0]
+    userType = tupleUser[6]
+    if userType != "Administrator":
+        return render_template('adminrequiredusers.html')
+    if request.method == 'POST':
+        password = request.form['password']
+        confirmPassword = request.form['confirmPassword']
+        if not password:
+            flash('Password is required!')
+        elif not confirmPassword:
+            flash('Confirm Password is required!')
+        elif password != confirmPassword:
+            flash('Passwords do not match!')
+        else:
+            for i in range(10):
+                password = hashlib.sha3_512(password.encode('utf-8'))
+                password = password.hexdigest()
+            if password != tupleUser[1]:
+                print("Password", password)
+                print("Password 2", tupleUser[1])
+                flash('Password is incorrect!')
+            else:
+                try:
+                    database = r"database.db"
+                    conn = None
+                    conn = sqlite3.connect(database)
+                    cur = conn.cursor()
+                    cur.execute('DELETE FROM users')  # deleting all the users from the database
+                    cur.execute('DELETE FROM projects')  # deleting all the projects from the database
+                    cur.execute('DELETE FROM tasks')  # deleting all the tasks from the database
+                    conn.commit()
+                    cur.close()
+                    flash('Task Management System Reset Successfully!')
+                    return redirect(url_for('index'))
+                except IndexError:
+                    flash('Error resetting database!')
+    return render_template('reset.html')
 
 @app.route('/testpage' , methods=['GET', 'POST'])
 def testpage():

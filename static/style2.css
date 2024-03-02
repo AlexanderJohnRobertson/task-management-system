@@ -1,4 +1,4 @@
-/* Main CSS for the application including navbars */
+    /* Main CSS for the application including navbars */
 
 	@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@100;200;300;400;500;600;700;800;900&display=swap'); /* Poppins font */
 
@@ -54,6 +54,26 @@ section {
   top: 0;
   left: 0;
   background-color: rgba(30, 130, 95, 0.5);
+}
+
+.image {
+  position: absolute;
+  width: 54%;
+  height: 80%;
+  left: 23%;
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+}
+
+.image2 {
+  position: absolute;
+  width: 54%;
+  height: 70%;
+  left: 23%;
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
 }
 
 .container {
@@ -530,12 +550,12 @@ section {
         }
 
          .heading1 {
-            font-size: 30px;
+            font-size: 40px;
             color: #ffffff;
         }
 
         .text1 {
-            font-size: 20px;
+            font-size: 30px;
             color: #ffffff;
         }
 
