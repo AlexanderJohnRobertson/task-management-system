@@ -49,9 +49,7 @@ def sendEmail(emailAddress, unencryptedPassword):
 Subject: Task Management System
 
 Your password has been reset.  Your new password is: """ + unencryptedPassword
-    print("Email sent", emailAddress, message)
     server.sendmail("taskmanagementsystem@hotmail.com", emailAddress, message)
-    print("Email sent") #printing a message to the console
     server.quit() #quitting the email server
 
 def setupEmail(emailAddress, unencryptedPassword):
@@ -63,9 +61,7 @@ def setupEmail(emailAddress, unencryptedPassword):
 Subject: Task Management System
 
 Welcome to the Task Management System (first time setup).  Your password is: """ + unencryptedPassword
-    print("Email sent", emailAddress, message)
     server.sendmail("taskmanagementsystem@hotmail.com", emailAddress, message)
-    print("Email sent") #printing a message to the console
     server.quit() #quitting the email server
 
 
@@ -135,7 +131,6 @@ def login():
                         cur.close()
                     else:
                         global_var(Uname)
-                        print(globalUsername)
                         database = r"database.db" #database file
                         conn = None
                         conn = sqlite3.connect(database) #connecting to the database
@@ -148,8 +143,6 @@ def login():
                         resp.set_cookie('userID', user) #setting the cookie connected to the username
                         return resp
                 else: #if the username and password are incorrect flash an error message
-                    # globalAttempt = global_var2(globalAttempt)
-
                     database = r"database.db"  # database file
                     conn = None
                     conn = sqlite3.connect(database)  # connecting to the database
@@ -158,8 +151,6 @@ def login():
                                 (username,))  # querying the database
                     failedLoginAttempts = cur.fetchall()
                     failedLoginAttempts = failedLoginAttempts[0][0]
-                    print(failedLoginAttempts)
-                    print(type(failedLoginAttempts))
                     failedLoginAttempts = failedLoginAttempts + 1
                     print(failedLoginAttempts)
                     cur.execute('UPDATE users SET failedLoginAttempt = ? WHERE username = ?',
@@ -178,8 +169,6 @@ def login():
                         flash(
                             'You have been blocked because you entered the wrong password too many times. Please contact the administrator.')
                     flash('Username or Password is incorrect!')
-
-                    # print(globalAttempt)
             except IndexError: #if there is an error caused by incorrect login details flash an error message
                 try:
                     database = r"database.db"  # database file
@@ -189,10 +178,7 @@ def login():
                     cur.execute('SELECT failedLoginattempt FROM users WHERE username = ?',(username,))  # querying the database
                     failedLoginAttempts = cur.fetchall()
                     failedLoginAttempts = failedLoginAttempts[0][0]
-                    print(failedLoginAttempts)
-                    print(type(failedLoginAttempts))
                     failedLoginAttempts = failedLoginAttempts + 1
-                    print(failedLoginAttempts)
                     cur.execute('UPDATE users SET failedLoginAttempt = ? WHERE username = ?',(failedLoginAttempts, username,))
                     conn.commit()
                     cur.close()
@@ -207,7 +193,6 @@ def login():
                         cur.close()
                         flash('You have been blocked because you entered the wrong password too many times. Please contact the administrator.')
                     flash('Username or Password is incorrect!')
-                    # print(globalAttempt)
                 except IndexError:
                     flash('Username does not exist!')
     return render_template('login.html') #render the login.html page
@@ -267,7 +252,6 @@ def createaccount():
         elif password == phonenumber:
             flash('Password cannot be the same as the phone number!')
         elif password in global_var2(): #if the password is in the common passwords list flash an error message
-            print(global_var2())
             flash('Password is too common!')
         else:
             try:
@@ -275,8 +259,6 @@ def createaccount():
                 conn = None
                 conn = sqlite3.connect(database) #connecting to the database
                 cur = conn.cursor()
-                # cur = mysql.connection.cursor()
-                # cur.execute('SELECT * FROM users WHERE username = %s AND password = %s', (username, password))
                 cur.execute('SELECT * FROM users WHERE username = ?', (username,)) #querying the database
                 user = cur.fetchall()
                 cur.close()
@@ -1014,7 +996,6 @@ def updateAccountDetails():
                 for i in range(10): #password hashing encryption
                     password = hashlib.sha3_512(password.encode('utf-8'))
                     password = password.hexdigest()
-                print(password)
                 database = r"database.db" #database file
                 conn = None
                 conn = sqlite3.connect(database)    #connecting to the database
@@ -1022,7 +1003,6 @@ def updateAccountDetails():
                 cur.execute('SELECT * FROM users WHERE username = ?', (cookie,)) #querying the database to check if the username exists
                 user = cur.fetchall()
                 tupleUser = user[0]
-                print(tupleUser[1]  )
                 if not user: #if the username does not exist flash an error message
                     flash('User does not exist!')
                 elif username != cookie:
@@ -1071,13 +1051,6 @@ def viewUsers():
     cur = conn.cursor()
     cur.execute("SELECT username, forename, surname, email, phone, usertype, blocked, failedLoginAttempt FROM users") #selecting the user details from the database
     data = cur.fetchall()
-    print("Data: ", data)
-
-    #tupleData = data[0],data[2],data[3],data[4],data[5],data[6] #get the user details
-    #print("Tuple Data: ", tupleData)
-    #data = []
-    #data.append(tupleData)
-    print("Data: ", data)
 
     #return jsonify(data)
     return render_template('viewusers.html', data1=data) #render the accountdetails.html page
@@ -1337,7 +1310,6 @@ def changeUserPassword():
                 tupleUser = user[0]
                 emailAddress = tupleUser[4]
                 unencryptedPassword = password
-                print("Email Address", emailAddress)
                 if not user:
                     flash('User does not exist!')
                 else:
@@ -1412,7 +1384,6 @@ def setup():
         elif password == phonenumber:
             flash('Password cannot be the same as the phone number!')
         elif password in global_var2():  # if the password is in the common passwords list flash an error message
-            print(global_var2())
             flash('Password is too common!')
         else:
             try:
@@ -1484,8 +1455,6 @@ def reset():
                 password = hashlib.sha3_512(password.encode('utf-8'))
                 password = password.hexdigest()
             if password != tupleUser[1]:
-                print("Password", password)
-                print("Password 2", tupleUser[1])
                 flash('Password is incorrect!')
             else:
                 try:
