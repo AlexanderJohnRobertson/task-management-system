@@ -17,7 +17,7 @@ from sqlite3 import Error, IntegrityError, OperationalError
 import hashlib
 import re
 import smtplib
-
+import random
 
 app = Flask(__name__) #creating the Flask application
 app.config['SECRET_KEY'] = 'hdyr35bjdgge65gcsl' #setting the secret key for the application
@@ -79,10 +79,20 @@ def index():
     if not root:
         return redirect(url_for('setup')) #if the root user does not exist redirect to the setup page
     else:
-        cookie = request.cookies.get('userID') #getting the cookie
-        if cookie != "": #if the cookie is not empty
+        cookie = request.cookies.get('userID')
+        sessionCookie = request.cookies.get('sessionID')#getting the cookie
+        if cookie != "" or sessionCookie != "0": #if the cookie is not empty
+            database = r"database.db" #database file
+            conn = None
+            conn = sqlite3.connect(database)
+            cur = conn.cursor()
+            sessionCookie = "0"
+            cur.execute('UPDATE users SET sessionID = ? WHERE username = ?', (sessionCookie, cookie,)) #querying the database
+            conn.commit()
+            cur.close()
             resp = make_response(render_template('logoutcookie.html'))
             resp.set_cookie('userID', "") #setting the cookie to an empty string
+            resp.set_cookie('sessionID', "0")
             return resp
         else:
             return render_template('index.html') #rendering the index.html page
@@ -130,17 +140,21 @@ def login():
                         conn.commit()
                         cur.close()
                     else:
+                        sessionID = random.randint(1000000000, 9999999999) #generate a random session ID
+                        print(sessionID)
                         global_var(Uname)
                         database = r"database.db" #database file
                         conn = None
                         conn = sqlite3.connect(database) #connecting to the database
                         cur = conn.cursor()
-                        cur.execute('UPDATE users SET failedLoginAttempt = ? WHERE username = ?', (0, username,))
+                        cur.execute('UPDATE users SET failedLoginAttempt = ? WHERE username = ?', (0, username, ))
+                        cur.execute('UPDATE users SET sessionID = ? WHERE username = ?', (sessionID, username,))
                         conn.commit()
                         cur.close()
                         user = Uname
                         resp = make_response(render_template('readcookie.html'))
                         resp.set_cookie('userID', user) #setting the cookie connected to the username
+                        resp.set_cookie('sessionID', str(sessionID)) #setting the cookie connected to the session ID
                         return resp
                 else: #if the username and password are incorrect flash an error message
                     database = r"database.db"  # database file
@@ -271,12 +285,14 @@ def createaccount():
                         for i in range(10): #password hashing encryption
                             password = hashlib.sha3_512(password.encode('utf-8'))
                             password = password.hexdigest()
+                        sessionID = random.randint(1000000000, 9999999999) #generate a random session ID
                         cur = conn.cursor()
-                        cur.execute('INSERT INTO users VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?)', (username, password, firstname, lastname, email, phonenumber, accountType, blocked, failedLoginAttempts)) #inserting the user details into the database
+                        cur.execute('INSERT INTO users VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?)', (username, password, firstname, lastname, email, phonenumber, accountType, blocked, failedLoginAttempts, sessionID)) #inserting the user details into the database
                         conn.commit()
                         cur.close()
                         resp = make_response(render_template('readcookie.html')) #setting the cookie connected to the username
                         resp.set_cookie('userID', username)
+                        resp.set_cookie('sessionID', str(sessionID))
                         return resp
             except IndexError: #if there is an error caused by incorrect login details flash an error message
                 flash('Username or Password is incorrect!')
@@ -287,15 +303,21 @@ def userhome():
     '''This function renders the userhome page.'''
     try:
         cookie = request.cookies.get('userID') #get the cookie
+        sessionCookie = request.cookies.get('sessionID') #get the session ID cookie
         database = r"database.db" #database file
         conn = None
         conn = sqlite3.connect(database) #connecting to the database
         cur = conn.cursor()
         cur.execute('SELECT * FROM users WHERE username = ?', (cookie,)) #querying the database
         user = cur.fetchall()
-        cur.close()
         if not user:
-            return render_template('accessdenied.html') # deny access if the user does not exist
+            return render_template('accessdenied.html')
+        sessionID = user[0][9]
+        cur.close()
+        if len(sessionID) < 10:
+            return render_template('accessdenied.html')
+        elif sessionID != sessionCookie:
+            return render_template('accessdenied.html')
     except IndexError:
         flash('Error')
     name = request.cookies.get('userID') #get the cookie
@@ -306,16 +328,22 @@ def userhome():
 def viewtasks():
     '''This function renders the viewtasks page.'''
     try:
-        cookie = request.cookies.get('userID') #get the cookie
-        database = r"database.db"
+        cookie = request.cookies.get('userID')  # get the cookie
+        sessionCookie = request.cookies.get('sessionID')  # get the session ID cookie
+        database = r"database.db"  # database file
         conn = None
-        conn = sqlite3.connect(database)
+        conn = sqlite3.connect(database)  # connecting to the database
         cur = conn.cursor()
-        cur.execute('SELECT * FROM users WHERE username = ?', (cookie,)) #querying the database
+        cur.execute('SELECT * FROM users WHERE username = ?', (cookie,))  # querying the database
         user = cur.fetchall()
-        cur.close()
         if not user:
-            return render_template('accessdenied.html') # deny access if the user does not exist
+            return render_template('accessdenied.html')
+        sessionID = user[0][9]
+        cur.close()
+        if len(sessionID) < 10:
+            return render_template('accessdenied.html')
+        elif sessionID != sessionCookie:
+            return render_template('accessdenied.html')
     except IndexError:
         flash('Error')
     database = r"database.db" #database file
@@ -335,16 +363,22 @@ def viewtasks():
 def viewprojects():
     '''This function renders the viewprojects page.'''
     try:
-        cookie = request.cookies.get('userID') #get the cookie
-        database = r"database.db" #database file
+        cookie = request.cookies.get('userID')  # get the cookie
+        sessionCookie = request.cookies.get('sessionID')  # get the session ID cookie
+        database = r"database.db"  # database file
         conn = None
-        conn = sqlite3.connect(database)
+        conn = sqlite3.connect(database)  # connecting to the database
         cur = conn.cursor()
-        cur.execute('SELECT * FROM users WHERE username = ?', (cookie,)) # query the database to check if the user exists
+        cur.execute('SELECT * FROM users WHERE username = ?', (cookie,))  # querying the database
         user = cur.fetchall()
-        cur.close()
         if not user:
-            return render_template('accessdenied.html') # deny access if the user does not exist
+            return render_template('accessdenied.html')
+        sessionID = user[0][9]
+        cur.close()
+        if len(sessionID) < 10:
+            return render_template('accessdenied.html')
+        elif sessionID != sessionCookie:
+            return render_template('accessdenied.html')
     except IndexError:
         flash('Error')
     database = r"database.db" #database file
@@ -368,16 +402,22 @@ def readcookie():
 def addtask():
     '''This function allows the user to add a task to the database.'''
     try:
-        cookie = request.cookies.get('userID') #get the cookie
-        database = r"database.db"
+        cookie = request.cookies.get('userID')  # get the cookie
+        sessionCookie = request.cookies.get('sessionID')  # get the session ID cookie
+        database = r"database.db"  # database file
         conn = None
-        conn = sqlite3.connect(database) #connecting to the database
+        conn = sqlite3.connect(database)  # connecting to the database
         cur = conn.cursor()
-        cur.execute('SELECT * FROM users WHERE username = ?', (cookie,)) #querying the database to check if the user exists
+        cur.execute('SELECT * FROM users WHERE username = ?', (cookie,))  # querying the database
         user = cur.fetchall()
-        cur.close()
         if not user:
-            return render_template('accessdenied.html') # deny access if the user does not exist
+            return render_template('accessdenied.html')
+        sessionID = user[0][9]
+        cur.close()
+        if len(sessionID) < 10:
+            return render_template('accessdenied.html')
+        elif sessionID != sessionCookie:
+            return render_template('accessdenied.html')
     except IndexError:
         flash('Error')
     if request.method == 'POST': #get form details
@@ -442,16 +482,22 @@ def addtask():
 @app.route('/updatetask', methods=['POST', 'GET'])
 def updatetask():
     '''This function allows the user to update a task in the database.'''
-    cookie = request.cookies.get('userID') #get the cookie
-    database = r"database.db"   #database file
+    cookie = request.cookies.get('userID')  # get the cookie
+    sessionCookie = request.cookies.get('sessionID')  # get the session ID cookie
+    database = r"database.db"  # database file
     conn = None
-    conn = sqlite3.connect(database) #connecting to the database
+    conn = sqlite3.connect(database)  # connecting to the database
     cur = conn.cursor()
-    cur.execute('SELECT * FROM users WHERE username = ?', (cookie,)) #querying the database to check if the user exists
+    cur.execute('SELECT * FROM users WHERE username = ?', (cookie,))  # querying the database
     user = cur.fetchall()
-    cur.close()
     if not user:
-        return render_template('accessdenied.html') # deny access if the user does not exist
+        return render_template('accessdenied.html')
+    sessionID = user[0][9]
+    cur.close()
+    if len(sessionID) < 10:
+        return render_template('accessdenied.html')
+    elif sessionID != sessionCookie:
+        return render_template('accessdenied.html')
     tupleUser = user[0]
     userType = tupleUser[6]
     if userType != "Administrator": #if the user is not an administrator deny access
@@ -511,15 +557,21 @@ def updatetask():
 @app.route('/deletetask', methods=['POST', 'GET'])
 def deletetask():
     '''This function allows the user to delete a task from the database.'''
-    cookie = request.cookies.get('userID') #get the cookie
-    database = r"database.db" #database file
+    cookie = request.cookies.get('userID')  # get the cookie
+    sessionCookie = request.cookies.get('sessionID')  # get the session ID cookie
+    database = r"database.db"  # database file
     conn = None
-    conn = sqlite3.connect(database)    #connecting to the database
+    conn = sqlite3.connect(database)  # connecting to the database
     cur = conn.cursor()
-    cur.execute('SELECT * FROM users WHERE username = ?', (cookie,)) #querying the database to check if the user exists
+    cur.execute('SELECT * FROM users WHERE username = ?', (cookie,))  # querying the database
     user = cur.fetchall()
+    if not user:
+        return render_template('accessdenied.html')
+    sessionID = user[0][9]
     cur.close()
-    if not user: # deny access if the user does not exist
+    if len(sessionID) < 10:
+        return render_template('accessdenied.html')
+    elif sessionID != sessionCookie:
         return render_template('accessdenied.html')
     tupleUser = user[0]
     userType = tupleUser[6]
@@ -560,16 +612,22 @@ def deletetask():
 def addproject():
     '''This function allows the user to add a project to the database.'''
     try:
-        cookie = request.cookies.get('userID') #get the cookie
-        database = r"database.db"   #database file
+        cookie = request.cookies.get('userID')  # get the cookie
+        sessionCookie = request.cookies.get('sessionID')  # get the session ID cookie
+        database = r"database.db"  # database file
         conn = None
-        conn = sqlite3.connect(database)
+        conn = sqlite3.connect(database)  # connecting to the database
         cur = conn.cursor()
-        cur.execute('SELECT * FROM users WHERE username = ?', (cookie,))    #querying the database to check if the user exists
+        cur.execute('SELECT * FROM users WHERE username = ?', (cookie,))  # querying the database
         user = cur.fetchall()
-        cur.close()
         if not user:
-            return render_template('accessdenied.html') # deny access if the user does not exist
+            return render_template('accessdenied.html')
+        sessionID = user[0][9]
+        cur.close()
+        if len(sessionID) < 10:
+            return render_template('accessdenied.html')
+        elif sessionID != sessionCookie:
+            return render_template('accessdenied.html')
     except IndexError:
         flash('Error')
     if request.method == 'POST': #get form details
@@ -615,15 +673,21 @@ def addproject():
 @app.route('/updateproject', methods=['POST', 'GET'])
 def updateproject():
     '''This function allows the user to update a project in the database.'''
-    cookie = request.cookies.get('userID') #get the cookie
-    database = r"database.db"   #database file
+    cookie = request.cookies.get('userID')  # get the cookie
+    sessionCookie = request.cookies.get('sessionID')  # get the session ID cookie
+    database = r"database.db"  # database file
     conn = None
-    conn = sqlite3.connect(database)
+    conn = sqlite3.connect(database)  # connecting to the database
     cur = conn.cursor()
-    cur.execute('SELECT * FROM users WHERE username = ?', (cookie,))    #querying the database to check if the user exists
+    cur.execute('SELECT * FROM users WHERE username = ?', (cookie,))  # querying the database
     user = cur.fetchall()
+    if not user:
+        return render_template('accessdenied.html')
+    sessionID = user[0][9]
     cur.close()
-    if not user:   # deny access if the user does not exist
+    if len(sessionID) < 10:
+        return render_template('accessdenied.html')
+    elif sessionID != sessionCookie:
         return render_template('accessdenied.html')
     tupleUser = user[0]
     userType = tupleUser[6]
@@ -667,15 +731,21 @@ def updateproject():
 @app.route('/deleteproject', methods=['POST', 'GET'])
 def deleteproject():
     '''This function allows the user to delete a project from the database.'''
-    cookie = request.cookies.get('userID') #get the cookie
-    database = r"database.db"
+    cookie = request.cookies.get('userID')  # get the cookie
+    sessionCookie = request.cookies.get('sessionID')  # get the session ID cookie
+    database = r"database.db"  # database file
     conn = None
-    conn = sqlite3.connect(database) #connecting to the database
+    conn = sqlite3.connect(database)  # connecting to the database
     cur = conn.cursor()
-    cur.execute('SELECT * FROM users WHERE username = ?', (cookie,)) #querying the database to check if the user exists
+    cur.execute('SELECT * FROM users WHERE username = ?', (cookie,))  # querying the database
     user = cur.fetchall()
+    if not user:
+        return render_template('accessdenied.html')
+    sessionID = user[0][9]
     cur.close()
-    if not user: # deny access if the user does not exist
+    if len(sessionID) < 10:
+        return render_template('accessdenied.html')
+    elif sessionID != sessionCookie:
         return render_template('accessdenied.html')
     tupleUser = user[0]
     userType = tupleUser[6]
@@ -715,16 +785,22 @@ def deleteproject():
 @app.route('/changeusername', methods=['POST', 'GET'])
 def changeUsername():
     '''This function allows the user to change their username.'''
-    cookie = request.cookies.get('userID') #get the cookie
-    database = r"database.db" #database file
+    cookie = request.cookies.get('userID')  # get the cookie
+    sessionCookie = request.cookies.get('sessionID')  # get the session ID cookie
+    database = r"database.db"  # database file
     conn = None
-    conn = sqlite3.connect(database) #connecting to the database
+    conn = sqlite3.connect(database)  # connecting to the database
     cur = conn.cursor()
-    cur.execute('SELECT * FROM users WHERE username = ?', (cookie,)) #querying the database to check if the user exists
+    cur.execute('SELECT * FROM users WHERE username = ?', (cookie,))  # querying the database
     user = cur.fetchall()
-    cur.close()
     if not user:
-        return render_template('accessdenied.html') # deny access if the user does not exist
+        return render_template('accessdenied.html')
+    sessionID = user[0][9]
+    cur.close()
+    if len(sessionID) < 10:
+        return render_template('accessdenied.html')
+    elif sessionID != sessionCookie:
+        return render_template('accessdenied.html')
     if request.method == 'POST': #get form details
         username = request.form['username']
         newUsername = request.form['newUsername']
@@ -777,16 +853,22 @@ def changeUsername():
 @app.route('/changepassword', methods=['POST', 'GET'])
 def changePassword():
     '''This function allows the user to change their password.'''
-    cookie = request.cookies.get('userID') #get the cookie
-    database = r"database.db" #database file
+    cookie = request.cookies.get('userID')  # get the cookie
+    sessionCookie = request.cookies.get('sessionID')  # get the session ID cookie
+    database = r"database.db"  # database file
     conn = None
-    conn = sqlite3.connect(database) #connecting to the database
+    conn = sqlite3.connect(database)  # connecting to the database
     cur = conn.cursor()
-    cur.execute('SELECT * FROM users WHERE username = ?', (cookie,)) #querying the database to check if the user exists
+    cur.execute('SELECT * FROM users WHERE username = ?', (cookie,))  # querying the database
     user = cur.fetchall()
-    cur.close()
     if not user:
-        return render_template('accessdenied.html') # deny access if the user does not exist
+        return render_template('accessdenied.html')
+    sessionID = user[0][9]
+    cur.close()
+    if len(sessionID) < 10:
+        return render_template('accessdenied.html')
+    elif sessionID != sessionCookie:
+        return render_template('accessdenied.html')
     if request.method == 'POST': #get form details
         username = request.form['username']
         password = request.form['password']
@@ -872,16 +954,22 @@ def changePassword():
 @app.route('/deleteaccount', methods=['POST', 'GET'])
 def deleteAccount():
     '''This function allows the user to delete their account.'''
-    cookie = request.cookies.get('userID')  #get the cookie
-    database = r"database.db"
+    cookie = request.cookies.get('userID')  # get the cookie
+    sessionCookie = request.cookies.get('sessionID')  # get the session ID cookie
+    database = r"database.db"  # database file
     conn = None
-    conn = sqlite3.connect(database) #connecting to the database
+    conn = sqlite3.connect(database)  # connecting to the database
     cur = conn.cursor()
-    cur.execute('SELECT * FROM users WHERE username = ?', (cookie,)) #querying the database to check if the user exists
+    cur.execute('SELECT * FROM users WHERE username = ?', (cookie,))  # querying the database
     user = cur.fetchall()
+    if not user:
+        return render_template('accessdenied.html')
+    sessionID = user[0][9]
     cur.close()
-    if not user: # deny access if the user does not exist
-        return render_template('accessdenied.html') # deny access if the user does not exist
+    if len(sessionID) < 10:
+        return render_template('accessdenied.html')
+    elif sessionID != sessionCookie:
+        return render_template('accessdenied.html')
     if request.method == 'POST': #get form details
         username = request.form['username']
         password = request.form['password']
@@ -930,16 +1018,22 @@ def deleteAccount():
 def viewAccountDetails():
     '''This function allows the user to view their account details.'''
     try:
-        cookie = request.cookies.get('userID') #get the cookie
-        database = r"database.db" #database file
+        cookie = request.cookies.get('userID')  # get the cookie
+        sessionCookie = request.cookies.get('sessionID')  # get the session ID cookie
+        database = r"database.db"  # database file
         conn = None
-        conn = sqlite3.connect(database) #connecting to the database
+        conn = sqlite3.connect(database)  # connecting to the database
         cur = conn.cursor()
-        cur.execute('SELECT * FROM users WHERE username = ?', (cookie,)) #querying the database to check if the user exists
+        cur.execute('SELECT * FROM users WHERE username = ?', (cookie,))  # querying the database
         user = cur.fetchall()
-        cur.close()
         if not user:
-            return render_template('accessdenied.html') # deny access if the user does not exist
+            return render_template('accessdenied.html')
+        sessionID = user[0][9]
+        cur.close()
+        if len(sessionID) < 10:
+            return render_template('accessdenied.html')
+        elif sessionID != sessionCookie:
+            return render_template('accessdenied.html')
     except IndexError:
         flash('Error')
     database = r"database.db" #database file
@@ -962,15 +1056,21 @@ def viewAccountDetails():
 @app.route('/updateaccountdetails', methods=['POST', 'GET'])
 def updateAccountDetails():
     '''This function allows the user to update their account details.'''
-    cookie = request.cookies.get('userID') #get the cookie
-    database = r"database.db"
+    cookie = request.cookies.get('userID')  # get the cookie
+    sessionCookie = request.cookies.get('sessionID')  # get the session ID cookie
+    database = r"database.db"  # database file
     conn = None
-    conn = sqlite3.connect(database) #connecting to the database
+    conn = sqlite3.connect(database)  # connecting to the database
     cur = conn.cursor()
-    cur.execute('SELECT * FROM users WHERE username = ?', (cookie,)) #querying the database to check if the user exists
+    cur.execute('SELECT * FROM users WHERE username = ?', (cookie,))  # querying the database
     user = cur.fetchall()
-    cur.close() # close the cursor
-    if not user: # deny access if the user does not exist
+    if not user:
+        return render_template('accessdenied.html')
+    sessionID = user[0][9]
+    cur.close()
+    if len(sessionID) < 10:
+        return render_template('accessdenied.html')
+    elif sessionID != sessionCookie:
         return render_template('accessdenied.html')
     if request.method == 'POST': #get form details
         username = request.form['username']
@@ -1025,15 +1125,21 @@ def updateAccountDetails():
 def viewUsers():
     '''This function allows the user to view their account details.'''
     try:
-        cookie = request.cookies.get('userID') #get the cookie
-        database = r"database.db" #database file
+        cookie = request.cookies.get('userID')  # get the cookie
+        sessionCookie = request.cookies.get('sessionID')  # get the session ID cookie
+        database = r"database.db"  # database file
         conn = None
-        conn = sqlite3.connect(database) #connecting to the database
+        conn = sqlite3.connect(database)  # connecting to the database
         cur = conn.cursor()
-        cur.execute('SELECT * FROM users WHERE username = ?', (cookie,)) #querying the database to check if the user exists
+        cur.execute('SELECT * FROM users WHERE username = ?', (cookie,))  # querying the database
         user = cur.fetchall()
-        cur.close()
         if not user:
+            return render_template('accessdenied.html')
+        sessionID = user[0][9]
+        cur.close()
+        if len(sessionID) < 10:
+            return render_template('accessdenied.html')
+        elif sessionID != sessionCookie:
             return render_template('accessdenied.html')
         tupleUser = user[0]
         userType = tupleUser[6]
@@ -1059,16 +1165,21 @@ def viewUsers():
 def blockUser():
     '''This function allows the user to block a user.'''
     cookie = request.cookies.get('userID')  # get the cookie
-    database = r"database.db"
+    sessionCookie = request.cookies.get('sessionID')  # get the session ID cookie
+    database = r"database.db"  # database file
     conn = None
     conn = sqlite3.connect(database)  # connecting to the database
     cur = conn.cursor()
-    cur.execute('SELECT * FROM users WHERE username = ?',
-                (cookie,))  # querying the database to check if the user exists
+    cur.execute('SELECT * FROM users WHERE username = ?', (cookie,))  # querying the database
     user = cur.fetchall()
+    if not user:
+        return render_template('accessdenied.html')
+    sessionID = user[0][9]
     cur.close()
-    if not user:  # deny access if the user does not exist
-        return render_template('accessdenied.html')  # deny access if the user does not exist
+    if len(sessionID) < 10:
+        return render_template('accessdenied.html')
+    elif sessionID != sessionCookie:
+        return render_template('accessdenied.html')
     tupleUser = user[0]
     userType = tupleUser[6]
     if userType != "Administrator":  # if the user is not an administrator deny access
@@ -1111,15 +1222,21 @@ def blockUser():
 @app.route('/unblockuser', methods=['POST', 'GET'])
 def unblockUser():
     '''This function allows the user to unblock a user.'''
-    cookie = request.cookies.get('userID')
-    database = r"database.db"
+    cookie = request.cookies.get('userID')  # get the cookie
+    sessionCookie = request.cookies.get('sessionID')  # get the session ID cookie
+    database = r"database.db"  # database file
     conn = None
-    conn = sqlite3.connect(database)
+    conn = sqlite3.connect(database)  # connecting to the database
     cur = conn.cursor()
-    cur.execute('SELECT * FROM users WHERE username = ?', (cookie,))
+    cur.execute('SELECT * FROM users WHERE username = ?', (cookie,))  # querying the database
     user = cur.fetchall()
-    cur.close()
     if not user:
+        return render_template('accessdenied.html')
+    sessionID = user[0][9]
+    cur.close()
+    if len(sessionID) < 10:
+        return render_template('accessdenied.html')
+    elif sessionID != sessionCookie:
         return render_template('accessdenied.html')
     tupleUser = user[0]
     userType = tupleUser[6]
@@ -1160,15 +1277,21 @@ def unblockUser():
 @app.route('/deleteuser', methods=['POST', 'GET'])
 def deleteUser():
     '''This function allows the user to delete a user.'''
-    cookie = request.cookies.get('userID')
-    database = r"database.db"
+    cookie = request.cookies.get('userID')  # get the cookie
+    sessionCookie = request.cookies.get('sessionID')  # get the session ID cookie
+    database = r"database.db"  # database file
     conn = None
-    conn = sqlite3.connect(database)
+    conn = sqlite3.connect(database)  # connecting to the database
     cur = conn.cursor()
-    cur.execute('SELECT * FROM users WHERE username = ?', (cookie,))
+    cur.execute('SELECT * FROM users WHERE username = ?', (cookie,))  # querying the database
     user = cur.fetchall()
-    cur.close()
     if not user:
+        return render_template('accessdenied.html')
+    sessionID = user[0][9]
+    cur.close()
+    if len(sessionID) < 10:
+        return render_template('accessdenied.html')
+    elif sessionID != sessionCookie:
         return render_template('accessdenied.html')
     tupleUser = user[0]
     userType = tupleUser[6]
@@ -1207,15 +1330,21 @@ def deleteUser():
 @app.route('/changeaccounttype', methods=['POST', 'GET'])
 def changeAccountType():
     '''This function allows the user to change the account type of a user.'''
-    cookie = request.cookies.get('userID')
-    database = r"database.db"
+    cookie = request.cookies.get('userID')  # get the cookie
+    sessionCookie = request.cookies.get('sessionID')  # get the session ID cookie
+    database = r"database.db"  # database file
     conn = None
-    conn = sqlite3.connect(database)
+    conn = sqlite3.connect(database)  # connecting to the database
     cur = conn.cursor()
-    cur.execute('SELECT * FROM users WHERE username = ?', (cookie,))
+    cur.execute('SELECT * FROM users WHERE username = ?', (cookie,))  # querying the database
     user = cur.fetchall()
-    cur.close()
     if not user:
+        return render_template('accessdenied.html')
+    sessionID = user[0][9]
+    cur.close()
+    if len(sessionID) < 10:
+        return render_template('accessdenied.html')
+    elif sessionID != sessionCookie:
         return render_template('accessdenied.html')
     tupleUser = user[0]
     userType = tupleUser[6]
@@ -1259,15 +1388,21 @@ def changeAccountType():
 @app.route('/changeuserpassword' , methods=['GET', 'POST'])
 def changeUserPassword():
     '''This function allows the user to change the password of a user.'''
-    cookie = request.cookies.get('userID')
-    database = r"database.db"
+    cookie = request.cookies.get('userID')  # get the cookie
+    sessionCookie = request.cookies.get('sessionID')  # get the session ID cookie
+    database = r"database.db"  # database file
     conn = None
-    conn = sqlite3.connect(database)
+    conn = sqlite3.connect(database)  # connecting to the database
     cur = conn.cursor()
-    cur.execute('SELECT * FROM users WHERE username = ?', (cookie,))
+    cur.execute('SELECT * FROM users WHERE username = ?', (cookie,))  # querying the database
     user = cur.fetchall()
-    cur.close()
     if not user:
+        return render_template('accessdenied.html')
+    sessionID = user[0][9]
+    cur.close()
+    if len(sessionID) < 10:
+        return render_template('accessdenied.html')
+    elif sessionID != sessionCookie:
         return render_template('accessdenied.html')
     tupleUser = user[0]
     userType = tupleUser[6]
@@ -1334,6 +1469,16 @@ def changeUserPassword():
 @app.route('/setup', methods=['POST', 'GET'])
 def setup():
     '''This function creates root user during setup.'''
+    database = r"database.db"
+    conn = None
+    conn = sqlite3.connect(database)
+    cur = conn.cursor()
+    root = "Root"
+    cur.execute('SELECT * FROM users WHERE username = ?', (root,))
+    user = cur.fetchall()
+    if user:
+        return redirect(url_for('index'))
+    conn.close()
     if request.method == 'POST':  # get form details
         username = "Root"
         password = request.form['password']
@@ -1407,15 +1552,17 @@ def setup():
                             for i in range(10):  # password hashing encryption
                                 password = hashlib.sha3_512(password.encode('utf-8'))
                                 password = password.hexdigest()
+                            sessionID = random.randint(1000000000, 9999999999)  # generate a random session ID
                             setupEmail(email, unencryptedPassword)  # send an email to the user with the password
                             cur = conn.cursor()
-                            cur.execute('INSERT INTO users VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?)', (
+                            cur.execute('INSERT INTO users VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?)', (
                             username, password, firstname, lastname, email, phonenumber, accountType, blocked,
-                            failedLoginAttempts))  # inserting the user details into the database
+                            failedLoginAttempts, sessionID))  # inserting the user details into the database
                             conn.commit()
                             cur.close()
                             resp = make_response(render_template('readcookie.html'))  # setting the cookie connected to the username
                             resp.set_cookie('userID', username)
+                            resp.set_cookie('sessionID', str(sessionID))
                             return resp
                         except UnicodeEncodeError:
                             flash('Error sending email. Password contains unsupported characters. Emailing passwords only supports ASCII Characters.')
@@ -1425,17 +1572,22 @@ def setup():
 
 @app.route('/reset', methods=['POST', 'GET'])
 def reset():
-    '''This function resets the database.'''
-    '''This function allows the user to change the password of a user.'''
-    cookie = request.cookies.get('userID')
-    database = r"database.db"
+    '''This function resets the Task Management System.'''
+    cookie = request.cookies.get('userID')  # get the cookie
+    sessionCookie = request.cookies.get('sessionID')  # get the session ID cookie
+    database = r"database.db"  # database file
     conn = None
-    conn = sqlite3.connect(database)
+    conn = sqlite3.connect(database)  # connecting to the database
     cur = conn.cursor()
-    cur.execute('SELECT * FROM users WHERE username = ?', (cookie,))
+    cur.execute('SELECT * FROM users WHERE username = ?', (cookie,))  # querying the database
     user = cur.fetchall()
-    cur.close()
     if not user:
+        return render_template('accessdenied.html')
+    sessionID = user[0][9]
+    cur.close()
+    if len(sessionID) < 10:
+        return render_template('accessdenied.html')
+    elif sessionID != sessionCookie:
         return render_template('accessdenied.html')
     tupleUser = user[0]
     userType = tupleUser[6]
