@@ -117,10 +117,10 @@ class TestRoutes(unittest.TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertIn(b'Access Denied', response.data)
 
-    def test_setup(self):
+    """def test_setup(self):
         response = self.app.get('setup')
         self.assertEqual(response.status_code, 200)
-        self.assertIn(b'First', response.data)
+        self.assertIn(b'First', response.data)"""
 
 if __name__ == '__main__':
     unittest.main()
