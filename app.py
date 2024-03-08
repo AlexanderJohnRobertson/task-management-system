@@ -1640,7 +1640,6 @@ def testpage2():
 @app.route('/test3')
 def testpage3():
     '''This is a test page for testing purposes.'''
-    x = 20
     return render_template('test3.html')
 
 
@@ -1649,5 +1648,4 @@ if __name__ == '__main__':
     port = int(os.environ.get('PORT', 5000)) #port number
     app.run(debug=True, host='0.0.0.0', port=port) #run the application
 
-    y = 301
 
