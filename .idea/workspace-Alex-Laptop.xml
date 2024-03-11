@@ -1,0 +1,148 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="AutoImportSettings">
+    <option name="autoReloadType" value="SELECTIVE" />
+  </component>
+  <component name="ChangeListManager">
+    <list default="true" id="88348ecf-7eed-459f-a401-bcf4beb201a4" name="Changes" comment="">
+      <change afterPath="$PROJECT_DIR$/.dockerignore" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/TaskManagementSystem.iml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/TaskManagementSystem.iml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
+    </list>
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="FileTemplateManagerImpl">
+    <option name="RECENT_TEMPLATES">
+      <list>
+        <option value="Flask Main" />
+        <option value="HTML File" />
+      </list>
+    </option>
+  </component>
+  <component name="FlaskConsoleOptions" custom-start-script="import sys&#10;sys.path.extend([WORKING_DIR_AND_PYTHON_PATHS])&#10;from flask.cli import ScriptInfo&#10;locals().update(ScriptInfo(create_app=None).load_app().make_shell_context())&#10;print(&quot;Python %s on %s\nApp: %s [%s]\nInstance: %s&quot; % (sys.version, sys.platform, app.import_name, app.env, app.instance_path))">
+    <envs>
+      <env key="FLASK_APP" value="app" />
+    </envs>
+    <option name="myCustomStartScript" value="import sys&#10;sys.path.extend([WORKING_DIR_AND_PYTHON_PATHS])&#10;from flask.cli import ScriptInfo&#10;locals().update(ScriptInfo(create_app=None).load_app().make_shell_context())&#10;print(&quot;Python %s on %s\nApp: %s [%s]\nInstance: %s&quot; % (sys.version, sys.platform, app.import_name, app.env, app.instance_path))" />
+    <option name="myEnvs">
+      <map>
+        <entry key="FLASK_APP" value="app" />
+      </map>
+    </option>
+  </component>
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+  </component>
+  <component name="ProjectColorInfo">{
+  &quot;customColor&quot;: &quot;&quot;,
+  &quot;associatedIndex&quot;: 4
+}</component>
+  <component name="ProjectId" id="2d2qRw3ZC0eFCezwH6AHHIuOYAn" />
+  <component name="ProjectViewState">
+    <option name="hideEmptyMiddlePackages" value="true" />
+    <option name="showLibraryContents" value="true" />
+  </component>
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;DefaultHtmlFileTemplate&quot;: &quot;HTML File&quot;,
+    &quot;Flask server.TaskManagementSystem.executor&quot;: &quot;Run&quot;,
+    &quot;Python tests.Python tests in unitTestTaskManagementSystem.py.executor&quot;: &quot;Run&quot;,
+    &quot;RunOnceActivity.OpenProjectViewOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;main&quot;,
+    &quot;last_opened_file_path&quot;: &quot;H:/OneDrivePersonal/OneDrive/Documents/Advanced_Computing_Suffolk/Advanced Software Engineering/Assignment/TaskManagementSystem2 - Copy&quot;,
+    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
+    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
+    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
+    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
+    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
+    &quot;settings.editor.selected.configurable&quot;: &quot;com.jetbrains.python.configuration.PyActiveSdkModuleConfigurable&quot;,
+    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
+  }
+}</component>
+  <component name="RunManager">
+    <configuration name="TaskManagementSystem" type="Python.FlaskServer">
+      <option name="flaskDebug" value="true" />
+      <module name="TaskManagementSystem" />
+      <option name="target" value="$PROJECT_DIR$/app.py" />
+      <option name="targetType" value="PATH" />
+      <option name="ENV_FILES" value="" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <option name="SDK_HOME" value="C:\Python312\python.exe" />
+      <option name="SDK_NAME" value="Python 3.12" />
+      <option name="WORKING_DIRECTORY" value="" />
+      <option name="IS_MODULE_SDK" value="false" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <EXTENSION ID="PythonCoverageRunConfigurationExtension" runner="coverage.py" />
+      <option name="launchJavascriptDebuger" value="false" />
+      <method v="2" />
+    </configuration>
+  </component>
+  <component name="SharedIndexes">
+    <attachedChunks>
+      <set>
+        <option value="bundled-python-sdk-d68999036c7f-b11f5e8da5ad-com.jetbrains.pycharm.pro.sharedIndexes.bundled-PY-233.14475.56" />
+      </set>
+    </attachedChunks>
+  </component>
+  <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="88348ecf-7eed-459f-a401-bcf4beb201a4" name="Changes" comment="" />
+      <created>1709216516629</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1709216516629</updated>
+      <workItem from="1709216558571" duration="43000" />
+      <workItem from="1709216776736" duration="168000" />
+      <workItem from="1709217265513" duration="6489000" />
+      <workItem from="1709228464070" duration="9591000" />
+      <workItem from="1709292970851" duration="2370000" />
+      <workItem from="1709312862256" duration="30000" />
+      <workItem from="1709312907034" duration="51000" />
+      <workItem from="1709315133394" duration="12536000" />
+      <workItem from="1709398129224" duration="3031000" />
+      <workItem from="1709406859148" duration="2097000" />
+      <workItem from="1709646994418" duration="14000" />
+      <workItem from="1709647023166" duration="3474000" />
+      <workItem from="1709668970658" duration="609000" />
+      <workItem from="1709738217863" duration="892000" />
+      <workItem from="1709747851887" duration="1500000" />
+      <workItem from="1709804515077" duration="11513000" />
+      <workItem from="1709816327739" duration="644000" />
+      <workItem from="1709817041293" duration="1420000" />
+      <workItem from="1709819440522" duration="143000" />
+      <workItem from="1709819641672" duration="12000" />
+      <workItem from="1709890995304" duration="10000" />
+      <workItem from="1709891021971" duration="625000" />
+      <workItem from="1709891662770" duration="84000" />
+      <workItem from="1709892454846" duration="3466000" />
+      <workItem from="1709900845625" duration="177000" />
+      <workItem from="1709901386557" duration="162000" />
+      <workItem from="1709901665160" duration="1300000" />
+      <workItem from="1709903076088" duration="642000" />
+      <workItem from="1709940420860" duration="5000" />
+      <workItem from="1710003947029" duration="1136000" />
+      <workItem from="1710005247267" duration="246000" />
+      <workItem from="1710005610547" duration="69000" />
+      <workItem from="1710005906765" duration="99000" />
+      <workItem from="1710006143557" duration="628000" />
+      <workItem from="1710006856704" duration="51000" />
+      <workItem from="1710007976720" duration="63000" />
+    </task>
+    <servers />
+  </component>
+  <component name="TypeScriptGeneratedFilesManager">
+    <option name="version" value="3" />
+  </component>
+  <component name="com.intellij.coverage.CoverageDataManagerImpl">
+    <SUITE FILE_PATH="coverage/TaskManagementSystem2$TaskManagementSystem.coverage" NAME="TaskManagementSystem Coverage Results" MODIFIED="1710004006295" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="" />
+    <SUITE FILE_PATH="coverage/TaskManagementSystem$.coverage" NAME=" Coverage Results" MODIFIED="1709817174384" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
+    <SUITE FILE_PATH="coverage/TaskManagementSystem$TaskManagementSystem.coverage" NAME="TaskManagementSystem Coverage Results" MODIFIED="1709891177473" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="" />
+  </component>
+</project>
