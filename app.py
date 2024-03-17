@@ -53,7 +53,7 @@ Your password has been reset.  Your new password is: """ + unencryptedPassword
     server.quit() #quitting the email server
 
 def setupEmail(emailAddress, unencryptedPassword):
-    '''This function sends an email to the user with their new password.'''
+    '''This function sends an email to the root user with their new password.'''
     server = smtplib.SMTP('smtp-mail.outlook.com', 587) #setting up the email server
     server.starttls() #starting the email server
     server.login("taskmanagementsystem@hotmail.com", "Python.303") #logging into the email server
@@ -67,7 +67,7 @@ Welcome to the Task Management System (first time setup).  Your password is: """
 
 @app.route('/', methods=['GET', 'POST'])
 def index():
-    '''Main page of the application. This is the first page that the user sees when they visit the website.'''
+    '''Main (Landing) page of the application. This is the first page that the user sees when they visit the website.'''
     rootUser = "Root"  # root user
     database = r"database.db" #database file
     conn = None
@@ -92,7 +92,7 @@ def index():
             cur.close()
             resp = make_response(render_template('logoutcookie.html'))
             resp.set_cookie('userID', "") #setting the cookie to an empty string
-            resp.set_cookie('sessionID', "0")
+            resp.set_cookie('sessionID', "0") #setting the session ID cookie to 0
             return resp
         else:
             return render_template('index.html') #rendering the index.html page
@@ -108,7 +108,6 @@ def login():
         elif not password:
             flash('Password is required!')
         else:
-            #failedLoginAttempts = 0
             try:
                 for i in range(10): #password hashing encryption
                         password = hashlib.sha3_512(password.encode('utf-8'))
@@ -117,8 +116,6 @@ def login():
                 conn = None
                 conn = sqlite3.connect(database) #connecting to the database
                 cur = conn.cursor()
-                # cur = mysql.connection.cursor()
-                # cur.execute('SELECT * FROM users WHERE username = %s AND password = %s', (username, password))
                 cur.execute('SELECT * FROM users WHERE username = ? AND password = ?', (username, password)) #querying the database
                 user = cur.fetchall()
                 cur.close()
@@ -147,8 +144,8 @@ def login():
                         conn = None
                         conn = sqlite3.connect(database) #connecting to the database
                         cur = conn.cursor()
-                        cur.execute('UPDATE users SET failedLoginAttempt = ? WHERE username = ?', (0, username, ))
-                        cur.execute('UPDATE users SET sessionID = ? WHERE username = ?', (sessionID, username,))
+                        cur.execute('UPDATE users SET failedLoginAttempt = ? WHERE username = ?', (0, username, )) #reset the failed login attempts to 0 if the user logs in successfully
+                        cur.execute('UPDATE users SET sessionID = ? WHERE username = ?', (sessionID, username,)) #update the session ID in the database
                         conn.commit()
                         cur.close()
                         user = Uname
@@ -165,13 +162,13 @@ def login():
                                 (username,))  # querying the database
                     failedLoginAttempts = cur.fetchall()
                     failedLoginAttempts = failedLoginAttempts[0][0]
-                    failedLoginAttempts = failedLoginAttempts + 1
+                    failedLoginAttempts = failedLoginAttempts + 1 #increment the failed login attempts if password is incorrect
                     print(failedLoginAttempts)
                     cur.execute('UPDATE users SET failedLoginAttempt = ? WHERE username = ?',
-                                (failedLoginAttempts, username,))
+                                (failedLoginAttempts, username,)) # updating the failed login attempts in the database
                     conn.commit()
                     cur.close()
-                    if failedLoginAttempts >= 3:
+                    if failedLoginAttempts >= 3: #block the user if there are 3 failed login attempts
                         blocked = "Yes"
                         database = r"database.db"
                         conn = None
@@ -192,11 +189,11 @@ def login():
                     cur.execute('SELECT failedLoginattempt FROM users WHERE username = ?',(username,))  # querying the database
                     failedLoginAttempts = cur.fetchall()
                     failedLoginAttempts = failedLoginAttempts[0][0]
-                    failedLoginAttempts = failedLoginAttempts + 1
-                    cur.execute('UPDATE users SET failedLoginAttempt = ? WHERE username = ?',(failedLoginAttempts, username,))
+                    failedLoginAttempts = failedLoginAttempts + 1 #increment the failed login attempts if password is incorrect
+                    cur.execute('UPDATE users SET failedLoginAttempt = ? WHERE username = ?',(failedLoginAttempts, username,)) #updating the failed login attempts in the database
                     conn.commit()
                     cur.close()
-                    if failedLoginAttempts >= 3:
+                    if failedLoginAttempts >= 3: #block the user if there are 3 failed login attempts
                         blocked = "Yes"
                         database = r"database.db"
                         conn = None
@@ -224,7 +221,7 @@ def createaccount():
         phonenumber = request.form['phonenumber']
         accountType = "Standard" #set the account type to standard
         blocked = "No" #set the blocked status to no
-        failedLoginAttempts = 0
+        failedLoginAttempts = 0 #set the failed login attempts to 0
         checkLowercase = re.search(r'[a-z]', password) #use regular expressions to validate the password
         checkUppercase = re.search(r'[A-Z]', password)
         checkNumber = re.search(r'[0-9]', password)
@@ -310,13 +307,13 @@ def userhome():
         cur = conn.cursor()
         cur.execute('SELECT * FROM users WHERE username = ?', (cookie,)) #querying the database
         user = cur.fetchall()
-        if not user:
+        if not user: #deny access if the user does not exist
             return render_template('accessdenied.html')
-        sessionID = user[0][9]
+        sessionID = user[0][9] #get the session ID from the database
         cur.close()
-        if len(sessionID) < 10:
+        if len(sessionID) < 10: #deny access if the session ID is less than 10 characters as the session ID is always 10 characters long
             return render_template('accessdenied.html')
-        elif sessionID != sessionCookie:
+        elif sessionID != sessionCookie: #deny access if the session ID in the database does not match the session ID cookie
             return render_template('accessdenied.html')
     except IndexError:
         flash('Error')
@@ -336,13 +333,13 @@ def viewtasks():
         cur = conn.cursor()
         cur.execute('SELECT * FROM users WHERE username = ?', (cookie,))  # querying the database
         user = cur.fetchall()
-        if not user:
+        if not user: #deny access if the user does not exist
             return render_template('accessdenied.html')
         sessionID = user[0][9]
         cur.close()
-        if len(sessionID) < 10:
+        if len(sessionID) < 10: #deny access if the session ID is less than 10 characters as the session ID is always 10 characters long
             return render_template('accessdenied.html')
-        elif sessionID != sessionCookie:
+        elif sessionID != sessionCookie: #deny access if the session ID in the database does not match the session ID cookie
             return render_template('accessdenied.html')
     except IndexError:
         flash('Error')
@@ -490,13 +487,13 @@ def updatetask():
     cur = conn.cursor()
     cur.execute('SELECT * FROM users WHERE username = ?', (cookie,))  # querying the database
     user = cur.fetchall()
-    if not user:
+    if not user:#deny access if the user does not exist
         return render_template('accessdenied.html')
     sessionID = user[0][9]
     cur.close()
-    if len(sessionID) < 10:
+    if len(sessionID) < 10: #deny access if the session ID is less than 10 characters as the session ID is always 10 characters long
         return render_template('accessdenied.html')
-    elif sessionID != sessionCookie:
+    elif sessionID != sessionCookie: #deny access if the session ID in the database does not match the session ID cookie
         return render_template('accessdenied.html')
     tupleUser = user[0]
     userType = tupleUser[6]
@@ -565,13 +562,13 @@ def deletetask():
     cur = conn.cursor()
     cur.execute('SELECT * FROM users WHERE username = ?', (cookie,))  # querying the database
     user = cur.fetchall()
-    if not user:
+    if not user: #deny access if the user does not exist
         return render_template('accessdenied.html')
     sessionID = user[0][9]
     cur.close()
-    if len(sessionID) < 10:
+    if len(sessionID) < 10: #deny access if the session ID is less than 10 characters as the session ID is always 10 characters long
         return render_template('accessdenied.html')
-    elif sessionID != sessionCookie:
+    elif sessionID != sessionCookie: #deny access if the session ID in the database does not match the session ID cookie
         return render_template('accessdenied.html')
     tupleUser = user[0]
     userType = tupleUser[6]
@@ -620,13 +617,13 @@ def addproject():
         cur = conn.cursor()
         cur.execute('SELECT * FROM users WHERE username = ?', (cookie,))  # querying the database
         user = cur.fetchall()
-        if not user:
+        if not user: #deny access if the user does not exist
             return render_template('accessdenied.html')
         sessionID = user[0][9]
         cur.close()
-        if len(sessionID) < 10:
+        if len(sessionID) < 10: #deny access if the session ID is less than 10 characters as the session ID is always 10 characters long
             return render_template('accessdenied.html')
-        elif sessionID != sessionCookie:
+        elif sessionID != sessionCookie: #deny access if the session ID in the database does not match the session ID cookie
             return render_template('accessdenied.html')
     except IndexError:
         flash('Error')
@@ -657,7 +654,7 @@ def addproject():
                     cur.execute('INSERT INTO projects VALUES(?, ?, ?, ?)', (projectid, title, description, assignedTasks)) #inserting the project details into the database
                     conn.commit()
                     cur.close()
-                    #flash ('Project added successfully!')
+
                     return redirect(url_for('viewprojects'))
             except IndexError:
                 flash('Error adding project!')
@@ -681,13 +678,13 @@ def updateproject():
     cur = conn.cursor()
     cur.execute('SELECT * FROM users WHERE username = ?', (cookie,))  # querying the database
     user = cur.fetchall()
-    if not user:
+    if not user:    #deny access if the user does not exist
         return render_template('accessdenied.html')
     sessionID = user[0][9]
     cur.close()
-    if len(sessionID) < 10:
+    if len(sessionID) < 10: #deny access if the session ID is less than 10 characters as the session ID is always 10 characters long
         return render_template('accessdenied.html')
-    elif sessionID != sessionCookie:
+    elif sessionID != sessionCookie: #deny access if the session ID in the database does not match the session ID cookie
         return render_template('accessdenied.html')
     tupleUser = user[0]
     userType = tupleUser[6]
@@ -739,13 +736,13 @@ def deleteproject():
     cur = conn.cursor()
     cur.execute('SELECT * FROM users WHERE username = ?', (cookie,))  # querying the database
     user = cur.fetchall()
-    if not user:
+    if not user: #deny access if the user does not exist
         return render_template('accessdenied.html')
     sessionID = user[0][9]
     cur.close()
-    if len(sessionID) < 10:
+    if len(sessionID) < 10: #deny access if the session ID is less than 10 characters as the session ID is always 10 characters long
         return render_template('accessdenied.html')
-    elif sessionID != sessionCookie:
+    elif sessionID != sessionCookie: #deny access if the session ID in the database does not match the session ID cookie
         return render_template('accessdenied.html')
     tupleUser = user[0]
     userType = tupleUser[6]
@@ -793,13 +790,13 @@ def changeUsername():
     cur = conn.cursor()
     cur.execute('SELECT * FROM users WHERE username = ?', (cookie,))  # querying the database
     user = cur.fetchall()
-    if not user:
+    if not user: #deny access if the user does not exist
         return render_template('accessdenied.html')
     sessionID = user[0][9]
     cur.close()
-    if len(sessionID) < 10:
+    if len(sessionID) < 10: #deny access if the session ID is less than 10 characters as the session ID is always 10 characters long
         return render_template('accessdenied.html')
-    elif sessionID != sessionCookie:
+    elif sessionID != sessionCookie: #deny access if the session ID in the database does not match the session ID cookie
         return render_template('accessdenied.html')
     if request.method == 'POST': #get form details
         username = request.form['username']
@@ -861,13 +858,13 @@ def changePassword():
     cur = conn.cursor()
     cur.execute('SELECT * FROM users WHERE username = ?', (cookie,))  # querying the database
     user = cur.fetchall()
-    if not user:
+    if not user: #deny access if the user does not exist
         return render_template('accessdenied.html')
     sessionID = user[0][9]
     cur.close()
-    if len(sessionID) < 10:
+    if len(sessionID) < 10: #deny access if the session ID is less than 10 characters as the session ID is always 10 characters long
         return render_template('accessdenied.html')
-    elif sessionID != sessionCookie:
+    elif sessionID != sessionCookie: #deny access if the session ID in the database does not match the session ID cookie
         return render_template('accessdenied.html')
     if request.method == 'POST': #get form details
         username = request.form['username']
@@ -962,13 +959,13 @@ def deleteAccount():
     cur = conn.cursor()
     cur.execute('SELECT * FROM users WHERE username = ?', (cookie,))  # querying the database
     user = cur.fetchall()
-    if not user:
+    if not user: #deny access if the user does not exist
         return render_template('accessdenied.html')
     sessionID = user[0][9]
     cur.close()
-    if len(sessionID) < 10:
+    if len(sessionID) < 10: #deny access if the session ID is less than 10 characters as the session ID is always 10 characters long
         return render_template('accessdenied.html')
-    elif sessionID != sessionCookie:
+    elif sessionID != sessionCookie: #deny access if the session ID in the database does not match the session ID cookie
         return render_template('accessdenied.html')
     if request.method == 'POST': #get form details
         username = request.form['username']
@@ -990,7 +987,7 @@ def deleteAccount():
                 cur = conn.cursor()
                 cur.execute('SELECT * FROM users WHERE username = ?', (username,)) #querying the database to check if the username exists
                 user = cur.fetchall()
-                encryptedPassword = user[0][1]
+                encryptedPassword = user[0][1] #get the user details
                 for i in range(10): #password hashing encryption
                     password = hashlib.sha3_512(password.encode('utf-8'))
                     password = password.hexdigest()
@@ -1026,13 +1023,13 @@ def viewAccountDetails():
         cur = conn.cursor()
         cur.execute('SELECT * FROM users WHERE username = ?', (cookie,))  # querying the database
         user = cur.fetchall()
-        if not user:
+        if not user: #deny access if the user does not exist
             return render_template('accessdenied.html')
         sessionID = user[0][9]
         cur.close()
-        if len(sessionID) < 10:
+        if len(sessionID) < 10: #deny access if the session ID is less than 10 characters as the session ID is always 10 characters long
             return render_template('accessdenied.html')
-        elif sessionID != sessionCookie:
+        elif sessionID != sessionCookie: #deny access if the session ID in the database does not match the session ID cookie
             return render_template('accessdenied.html')
     except IndexError:
         flash('Error')
@@ -1064,13 +1061,13 @@ def updateAccountDetails():
     cur = conn.cursor()
     cur.execute('SELECT * FROM users WHERE username = ?', (cookie,))  # querying the database
     user = cur.fetchall()
-    if not user:
+    if not user: #deny access if the user does not exist
         return render_template('accessdenied.html')
     sessionID = user[0][9]
     cur.close()
-    if len(sessionID) < 10:
+    if len(sessionID) < 10: #deny access if the session ID is less than 10 characters as the session ID is always 10 characters long
         return render_template('accessdenied.html')
-    elif sessionID != sessionCookie:
+    elif sessionID != sessionCookie: #deny access if the session ID in the database does not match the session ID cookie
         return render_template('accessdenied.html')
     if request.method == 'POST': #get form details
         username = request.form['username']
@@ -1133,13 +1130,13 @@ def viewUsers():
         cur = conn.cursor()
         cur.execute('SELECT * FROM users WHERE username = ?', (cookie,))  # querying the database
         user = cur.fetchall()
-        if not user:
+        if not user: #deny access if the user does not exist
             return render_template('accessdenied.html')
         sessionID = user[0][9]
         cur.close()
-        if len(sessionID) < 10:
+        if len(sessionID) < 10: #deny access if the session ID is less than 10 characters as the session ID is always 10 characters long
             return render_template('accessdenied.html')
-        elif sessionID != sessionCookie:
+        elif sessionID != sessionCookie: #deny access if the session ID in the database does not match the session ID cookie
             return render_template('accessdenied.html')
         tupleUser = user[0]
         userType = tupleUser[6]
@@ -1172,13 +1169,13 @@ def blockUser():
     cur = conn.cursor()
     cur.execute('SELECT * FROM users WHERE username = ?', (cookie,))  # querying the database
     user = cur.fetchall()
-    if not user:
+    if not user: #deny access if the user does not exist
         return render_template('accessdenied.html')
     sessionID = user[0][9]
     cur.close()
-    if len(sessionID) < 10:
+    if len(sessionID) < 10: #deny access if the session ID is less than 10 characters as the session ID is always 10 characters long
         return render_template('accessdenied.html')
-    elif sessionID != sessionCookie:
+    elif sessionID != sessionCookie: #deny access if the session ID in the database does not match the session ID cookie
         return render_template('accessdenied.html')
     tupleUser = user[0]
     userType = tupleUser[6]
@@ -1208,16 +1205,16 @@ def blockUser():
                     flash('User is already blocked!')
                 else:
                     blocked = "Yes"
-                    cur.execute('UPDATE users SET blocked = ? WHERE username = ?', (blocked, username)) #updating the user details in the database
+                    cur.execute('UPDATE users SET blocked = ? WHERE username = ?', (blocked, username)) #updating the user details in the database to block the user
                     conn.commit()
                     cur.close()
                     flash('User blocked successfully!')  # flash a success message
-                    return redirect(url_for('viewUsers'))  # redirect to the index page and log the user out after deleting the account
+                    return redirect(url_for('viewUsers'))  # redirect to the view users page and log the user out after blocking the account
             except IndexError:
                 flash('User does not exist!')
             except IntegrityError:
                 flash('User already exists!')
-    return render_template('blockuser.html')
+    return render_template('blockuser.html') # render the blockuser.html page
 
 @app.route('/unblockuser', methods=['POST', 'GET'])
 def unblockUser():
@@ -1230,13 +1227,13 @@ def unblockUser():
     cur = conn.cursor()
     cur.execute('SELECT * FROM users WHERE username = ?', (cookie,))  # querying the database
     user = cur.fetchall()
-    if not user:
+    if not user: # deny access if the user does not exist
         return render_template('accessdenied.html')
     sessionID = user[0][9]
     cur.close()
-    if len(sessionID) < 10:
+    if len(sessionID) < 10: # deny access if the session ID is less than 10 characters as the session ID is always 10 characters long
         return render_template('accessdenied.html')
-    elif sessionID != sessionCookie:
+    elif sessionID != sessionCookie:  # deny access if the session ID in the database does not match the session ID cookie
         return render_template('accessdenied.html')
     tupleUser = user[0]
     userType = tupleUser[6]
@@ -1252,7 +1249,7 @@ def unblockUser():
                 conn = None
                 conn = sqlite3.connect(database)
                 cur = conn.cursor()
-                cur.execute('SELECT * FROM users WHERE username = ?', (username,))
+                cur.execute('SELECT * FROM users WHERE username = ?', (username,)) # querying the database to check if the username exists
                 user = cur.fetchall()
                 tupleUser = user[0]
                 userBlocked = tupleUser[7]
@@ -1263,16 +1260,16 @@ def unblockUser():
                 else:
                     blocked = "No"
                     failedLoginAttempts = 0
-                    cur.execute('UPDATE users SET blocked = ?, failedLoginAttempt = ? WHERE username = ?', (blocked, failedLoginAttempts, username))
+                    cur.execute('UPDATE users SET blocked = ?, failedLoginAttempt = ? WHERE username = ?', (blocked, failedLoginAttempts, username)) #updating the user details in the database to unblock the user
                     conn.commit()
                     cur.close()
                     flash('User unblocked successfully!')
-                    return redirect(url_for('viewUsers'))
+                    return redirect(url_for('viewUsers')) # redirect to the view users page
             except IndexError:
                 flash('User does not exist!')
             except IntegrityError:
                 flash('User already exists!')
-    return render_template('unblockuser.html')
+    return render_template('unblockuser.html') # render the unblockuser.html page
 
 @app.route('/deleteuser', methods=['POST', 'GET'])
 def deleteUser():
@@ -1285,21 +1282,21 @@ def deleteUser():
     cur = conn.cursor()
     cur.execute('SELECT * FROM users WHERE username = ?', (cookie,))  # querying the database
     user = cur.fetchall()
-    if not user:
+    if not user: # deny access if the user does not exist
         return render_template('accessdenied.html')
     sessionID = user[0][9]
     cur.close()
-    if len(sessionID) < 10:
+    if len(sessionID) < 10: # deny access if the session ID is less than 10 characters as the session ID is always 10 characters long
         return render_template('accessdenied.html')
-    elif sessionID != sessionCookie:
+    elif sessionID != sessionCookie: # deny access if the session ID in the database does not match the session ID cookie
         return render_template('accessdenied.html')
     tupleUser = user[0]
     userType = tupleUser[6]
-    if userType != "Administrator":
+    if userType != "Administrator": # if the user is not an administrator deny access
         return render_template('adminrequiredusers.html')
-    if request.method == 'POST':
+    if request.method == 'POST': # get form details
         username = request.form['username']
-        if not username:
+        if not username: # validate the form details
             flash('Username is required!')
         elif username == cookie:
             flash('You cannot delete yourself!')
@@ -1311,21 +1308,21 @@ def deleteUser():
                 conn = None
                 conn = sqlite3.connect(database)
                 cur = conn.cursor()
-                cur.execute('SELECT * FROM users WHERE username = ?', (username,))
+                cur.execute('SELECT * FROM users WHERE username = ?', (username,)) # querying the database to check if the username exists
                 user = cur.fetchall()
                 if not user:
                     flash('User does not exist!')
                 else:
-                    cur.execute('DELETE FROM users WHERE username = ?', (username,))
+                    cur.execute('DELETE FROM users WHERE username = ?', (username,)) # deleting the user from the database
                     conn.commit()
                     cur.close()
                     flash('User deleted successfully!')
-                    return redirect(url_for('viewUsers'))
+                    return redirect(url_for('viewUsers')) # redirect to the view users page
             except IndexError:
                 flash('User does not exist!')
             except IntegrityError:
                 flash('User already exists!')
-    return render_template('deleteuser.html')
+    return render_template('deleteuser.html') # render the deleteuser.html page
 
 @app.route('/changeaccounttype', methods=['POST', 'GET'])
 def changeAccountType():
@@ -1338,22 +1335,22 @@ def changeAccountType():
     cur = conn.cursor()
     cur.execute('SELECT * FROM users WHERE username = ?', (cookie,))  # querying the database
     user = cur.fetchall()
-    if not user:
+    if not user: # deny access if the user does not exist
         return render_template('accessdenied.html')
     sessionID = user[0][9]
     cur.close()
-    if len(sessionID) < 10:
+    if len(sessionID) < 10: # deny access if the session ID is less than 10 characters as the session ID is always 10 characters long
         return render_template('accessdenied.html')
-    elif sessionID != sessionCookie:
+    elif sessionID != sessionCookie: # deny access if the session ID in the database does not match the session ID cookie
         return render_template('accessdenied.html')
     tupleUser = user[0]
     userType = tupleUser[6]
-    if userType != "Administrator":
+    if userType != "Administrator": # if the user is not an administrator deny access
         return render_template('adminrequiredusers.html')
-    if request.method == 'POST':
+    if request.method == 'POST': # get form details
         username = request.form['username']
         accountType = request.form['accountType']
-        if not username:
+        if not username: # validate the form details
             flash('Username is required!')
         elif not accountType:
             flash('Account Type is required!')
@@ -1364,26 +1361,26 @@ def changeAccountType():
         elif accountType != "Administrator" and accountType != "Standard":
             flash('Account Type must be Administrator or Standard (Case Sensitive)!')
         else:
-            try:
+            try: # change the account type
                 database = r"database.db"
                 conn = None
                 conn = sqlite3.connect(database)
                 cur = conn.cursor()
-                cur.execute('SELECT * FROM users WHERE username = ?', (username,))
+                cur.execute('SELECT * FROM users WHERE username = ?', (username,)) # querying the database to check if the username exists
                 user = cur.fetchall()
                 if not user:
                     flash('User does not exist!')
                 else:
-                    cur.execute('UPDATE users SET usertype = ? WHERE username = ?', (accountType, username))
+                    cur.execute('UPDATE users SET usertype = ? WHERE username = ?', (accountType, username)) # updating the account type in the database
                     conn.commit()
                     cur.close()
                     flash('Account type changed successfully!')
-                    return redirect(url_for('viewUsers'))
+                    return redirect(url_for('viewUsers')) # redirect to the view users page
             except IndexError:
                 flash('User does not exist!')
             except IntegrityError:
                 flash('User already exists!')
-    return render_template('changeaccounttype.html')
+    return render_template('changeaccounttype.html') # render the changeaccounttype.html page
 
 @app.route('/changeuserpassword' , methods=['GET', 'POST'])
 def changeUserPassword():
@@ -1396,27 +1393,27 @@ def changeUserPassword():
     cur = conn.cursor()
     cur.execute('SELECT * FROM users WHERE username = ?', (cookie,))  # querying the database
     user = cur.fetchall()
-    if not user:
+    if not user: # deny access if the user does not exist
         return render_template('accessdenied.html')
     sessionID = user[0][9]
     cur.close()
-    if len(sessionID) < 10:
+    if len(sessionID) < 10: # deny access if the session ID is less than 10 characters as the session ID is always 10 characters long
         return render_template('accessdenied.html')
-    elif sessionID != sessionCookie:
+    elif sessionID != sessionCookie: # deny access if the session ID in the database does not match the session ID cookie
         return render_template('accessdenied.html')
     tupleUser = user[0]
     userType = tupleUser[6]
-    if userType != "Administrator":
+    if userType != "Administrator": # if the user is not an administrator deny access
         return render_template('adminrequiredusers.html')
-    if request.method == 'POST':
+    if request.method == 'POST': # get form details
         username = request.form['username']
         password = request.form['password']
         confirmPassword = request.form['confirmPassword']
-        checkLowercase = re.search(r'[a-z]', password)
+        checkLowercase = re.search(r'[a-z]', password) # validate the password using regular expressions
         checkUppercase = re.search(r'[A-Z]', password)
         checkNumber = re.search(r'[0-9]', password)
         checkSpecialChar = re.search(r'[^A-Za-z0-9]', password)
-        if not username:
+        if not username: # validate the form details
             flash('Username is required!')
         elif not password:
             flash('Password is required!')
@@ -1440,7 +1437,7 @@ def changeUserPassword():
                 conn = None
                 conn = sqlite3.connect(database)
                 cur = conn.cursor()
-                cur.execute('SELECT * FROM users WHERE username = ?', (username,))
+                cur.execute('SELECT * FROM users WHERE username = ?', (username,)) # querying the database to check if the username exists
                 user = cur.fetchall()
                 tupleUser = user[0]
                 emailAddress = tupleUser[4]
@@ -1449,15 +1446,15 @@ def changeUserPassword():
                     flash('User does not exist!')
                 else:
                     try:
-                        for i in range(10):
+                        for i in range(10): # password hashing encryption
                             password = hashlib.sha3_512(password.encode('utf-8'))
                             password = password.hexdigest()
-                        sendEmail(emailAddress, unencryptedPassword)
-                        cur.execute('UPDATE users SET password = ? WHERE username = ?', (password, username))
+                        sendEmail(emailAddress, unencryptedPassword) # send an email to the user with the password
+                        cur.execute('UPDATE users SET password = ? WHERE username = ?', (password, username)) # updating the password in the database
                         conn.commit()
                         cur.close()
                         flash('Password changed successfully!')
-                        return redirect(url_for('viewUsers'))
+                        return redirect(url_for('viewUsers')) # redirect to the view users page
                     except UnicodeEncodeError:
                         flash('Error sending email. Password contains unsupported characters. Emailing passwords only supports ASCII Characters.')
             except IndexError:
@@ -1474,9 +1471,9 @@ def setup():
     conn = sqlite3.connect(database)
     cur = conn.cursor()
     root = "Root"
-    cur.execute('SELECT * FROM users WHERE username = ?', (root,))
+    cur.execute('SELECT * FROM users WHERE username = ?', (root,)) # querying the database to check if the username exists
     user = cur.fetchall()
-    if user:
+    if user: # if the root user already exists redirect to the index page
         return redirect(url_for('index'))
     conn.close()
     if request.method == 'POST':  # get form details
@@ -1581,19 +1578,19 @@ def reset():
     cur = conn.cursor()
     cur.execute('SELECT * FROM users WHERE username = ?', (cookie,))  # querying the database
     user = cur.fetchall()
-    if not user:
+    if not user: # deny access if the user does not exist
         return render_template('accessdenied.html')
     sessionID = user[0][9]
     cur.close()
-    if len(sessionID) < 10:
+    if len(sessionID) < 10: # deny access if the session ID is less than 10 characters as the session ID is always 10 characters long
         return render_template('accessdenied.html')
-    elif sessionID != sessionCookie:
+    elif sessionID != sessionCookie: # deny access if the session ID in the database does not match the session ID cookie
         return render_template('accessdenied.html')
     tupleUser = user[0]
     userType = tupleUser[6]
-    if userType != "Administrator":
+    if userType != "Administrator": # if the user is not an administrator deny access
         return render_template('adminrequiredusers.html')
-    if request.method == 'POST':
+    if request.method == 'POST': # get form details
         password = request.form['password']
         confirmPassword = request.form['confirmPassword']
         if not password:
@@ -1603,7 +1600,7 @@ def reset():
         elif password != confirmPassword:
             flash('Passwords do not match!')
         else:
-            for i in range(10):
+            for i in range(10): # password hashing encryption
                 password = hashlib.sha3_512(password.encode('utf-8'))
                 password = password.hexdigest()
             if password != tupleUser[1]:
