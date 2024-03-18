@@ -1,12 +1,13 @@
+<!-- HTML source code for setup page -->
 <head>
-  <link rel="stylesheet" href="/static/createaccountloginformstyle.css  ">
-   <link rel="stylesheet" href="/static/formstyle.css  ">
+  <link rel="stylesheet" href="/static/createaccountloginformstyle.css"> <!-- CSS style for the form to set up Task Management System and create Root user. -->
+   <link rel="stylesheet" href="/static/formstyle.css"> <!-- Main CSS style for the form. -->
 </head>
-{% extends 'base5.html' %}
+{% extends 'base5.html' %} <!-- Extend from base5.html which is the HTML file for the responsive navbar during setup -->
 
-{% block content %}
-<h2>First Time Setup - Create Root User</h2>
-<form method="post">
+{% block content %} <!-- Main content of the page -->
+<h2>First Time Setup - Create Root User</h2> <!-- Title of the form -->
+<form method="post"> <!-- Form for first time setup to create root user -->
   <section1 class="section1 left">
     <div class="input-container">
              <label class="text1">First Name</label>
@@ -44,7 +45,7 @@
     </div>
     </section1>
   <div class="send-container">
-    <button type="submit" class="btn transparent">Create Root User</button>
+    <button type="submit" class="btn transparent">Create Root User</button> <!-- Button to create root user and submit form data -->
     <br>
     <br>
     <br>
@@ -56,4 +57,5 @@
 
 </form>
 
-{% endblock %}
+{% endblock %} <!-- End of the main content of the page -->
+```

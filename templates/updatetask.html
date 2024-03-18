@@ -1,13 +1,14 @@
+<!-- HTML source code for update task page -->
 <head>
-  <link rel="stylesheet" href="/static/formstyle.css  ">
+  <link rel="stylesheet" href="/static/formstyle.css"> <!-- Link to the CSS file to style form-->
 </head>
-{% extends 'base4.html' %}
+{% extends 'base4.html' %} <!-- Extend from base4.html which is the HTML file for the responsive navbar while logged in -->
 
-{% block content %}
+{% block content %} <!-- Content block for the update task page -->
 
-          <h1 class="heading1">{% block title %} Update Task {% endblock %}</h1>
+          <h1 class="heading1">{% block title %} Update Task {% endblock %}</h1> <!-- Title for the update task page -->
           <div class="wpcf7" id="wpcf7-f156-p143-o1 formwrap">
-    <form method="post" class="wpcf7-form" novalidate="novalidate">
+    <form method="post" class="wpcf7-form" novalidate="novalidate"> <!-- Form for updating a task -->
         <div style="display: none;">
             <input type="hidden" name="_wpcf7" value="156">
             <input type="hidden" name="_wpcf7_version" value="3.7.2">
@@ -44,7 +45,7 @@
              <label class="text1">Project ID:</label>
              <input type="number" name="projectid" value="" size="40" class="textinput wpcf7-form-control wpcf7-text wpcf7-validates-as-required" aria-required="true" aria-invalid="false" placeholder="Must be a whole number.">
           </span>
-          <button type="submit" class="btn transparent">Update Task</button>
+          <button type="submit" class="btn transparent">Update Task</button> <!-- Submit button to update the task -->
             <br>
             <br>
             <br>
@@ -56,4 +57,5 @@
 </div>
 
 
-{% endblock %}
+{% endblock %} <!-- End of content block -->
+```

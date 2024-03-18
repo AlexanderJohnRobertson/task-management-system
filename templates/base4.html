@@ -1,16 +1,17 @@
+<!-- HTML source code for base4 page for responsive navbars and basic webpage when logged in -->
 
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>{% block title %} {% endblock %} - Task Management System</title>
+    <title>{% block title %} {% endblock %} - Task Management System</title> <!-- Title of the webpage -->
 
-    <link rel="stylesheet" href="/static/style2.css">
-  <script src="/static/navbar.js"></script>
+    <link rel="stylesheet" href="/static/style2.css"> <!-- Link to the main CSS file for navbar and all webpages that use base4.html -->
+  <script src="/static/navbar.js"></script> <!-- Link to the main JavaScript file for functionality for navbar -->
 </head>
 <body>
     <header>
-    <div class="container">
+    <div class="container"> <!-- Container for the navbar -->
       <input type="checkbox" name="check" id="check">
       <div class="logo-container">
         <h3 class="logo"><span>Task&nbsp;</span><span>Management&nbsp;</span><span>System</span></h3>
@@ -24,7 +25,7 @@
             </li>
             <li class="nav-link" style="--i: .85s">
               <a href="#"><span>Manage&nbsp;</span><span>Tasks</span><span>▼</span><i class="fas fa-caret-down"></i></a>
-              <div class="dropdown">
+              <div class="dropdown"> <!-- Dropdown for the tasks -->
                 <ul>
                   <li class="dropdown-link">
                     <a href="{{ url_for('addtask') }}">Create Task</a>
@@ -44,7 +45,7 @@
             </li>
             <li class="nav-link" style="--i: 1.1s">
               <a href="#"><span>Manage&nbsp;</span><span>Projects</span><span>▼</span><i class="fas fa-caret-down"></i></a>
-              <div class="dropdown">
+              <div class="dropdown"> <!-- Dropdown for the projects -->
                 <ul>
                   <li class="dropdown-link">
                     <a href="{{ url_for('addproject') }}">Create Project</a>
@@ -64,7 +65,7 @@
             </li>
             <li class="nav-link" style="--i: 1.1s">
               <a href="#"><span>Manage&nbsp;</span><span>Account</span><span>▼</span><i class="fas fa-caret-down"></i></a>
-              <div class="dropdown">
+              <div class="dropdown"> <!-- Dropdown for the account -->
                 <ul>
                   <li class="dropdown-link">
                     <a onclick="viewAccountDetails()">View Account Details</a>
@@ -87,7 +88,7 @@
             </li>
               <li class="nav-link" style="--i: 1.1s">
               <a href="#"><span>Manage&nbsp;</span><span>Users</span><span>▼</span><i class="fas fa-caret-down"></i></a>
-              <div class="dropdown">
+              <div class="dropdown"> <!-- Dropdown for the user management -->
                 <ul>
                   <li class="dropdown-link">
                     <a onclick="viewUsers()">View Users</a>
@@ -115,14 +116,14 @@
               </div>
             </li>
             <div class="log-sign" style="--i: 1.8s">
-          <a href="{{ url_for('index') }}" class="btn solid"><span>Log&nbsp;</span><span>Out</span></a>
+          <a href="{{ url_for('index') }}" class="btn solid"><span>Log&nbsp;</span><span>Out</span></a> <!-- Log out button -->
         </div>
           </ul>
         </div>
 
       </div>
 
-      <div class="hamburger-menu-container">
+      <div class="hamburger-menu-container"> <!-- Hamburger menu for mobile view -->
         <div class="hamburger-menu">
           <div></div>
         </div>
@@ -135,7 +136,7 @@
     <hr>
     <div class="content">
         {% for message in get_flashed_messages() %}
-            <div class="badalert">{{ message }}</div>
+            <div class="badalert">{{ message }}</div> <!-- Enable Flash messages for the user -->
         {% endfor %}
         {% block content %} {% endblock %}
     </div>

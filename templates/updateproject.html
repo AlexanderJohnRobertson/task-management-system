@@ -1,13 +1,14 @@
+<!-- HTML source code for update project page -->
 <head>
-  <link rel="stylesheet" href="/static/formstyle.css  ">
+  <link rel="stylesheet" href="/static/formstyle.css"> <!-- link to the css file to style form -->
 </head>
-{% extends 'base4.html' %}
+{% extends 'base4.html' %} <!-- Extend from base4.html which is the HTML file for the responsive navbar while logged in -->
 
-{% block content %}
+{% block content %} <!-- block content to display the form -->
 
-          <h1 class="heading1">{% block title %} Update Project {% endblock %}</h1>
+          <h1 class="heading1">{% block title %} Update Project {% endblock %}</h1> <!-- title of the page -->
           <div class="wpcf7" id="wpcf7-f156-p143-o1 formwrap">
-    <form method="post" class="wpcf7-form" novalidate="novalidate">
+    <form method="post" class="wpcf7-form" novalidate="novalidate"> <!-- update project form -->
         <div style="display: none;">
             <input type="hidden" name="_wpcf7" value="156">
             <input type="hidden" name="_wpcf7_version" value="3.7.2">
@@ -33,7 +34,7 @@
             <textarea class="md-textarea form-control rounded-0" id="assignedTasks" rows="5" name="assignedTasks" placeholder="List of assigned tasks here."></textarea>
           </span>
 
-          <button type="submit" class="btn transparent">Update Project</button>
+          <button type="submit" class="btn transparent">Update Project</button> <!-- submit button to update project -->
             <br>
             <br>
             <br>
@@ -45,4 +46,5 @@
 </div>
 
 
-{% endblock %}
+{% endblock %} <!-- end block content -->
+```

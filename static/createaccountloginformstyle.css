@@ -1,8 +1,8 @@
+/* This file is used to style the create account, login and setup forms */
+/* Original CSS sourced from codepen.io and modified by S275931 to suit the application. https://codepen.io/andstudio/pen/eYNeMM */
 * {
   box-sizing: border-box;
-}
-
-
+} /* Box Sizing */
 
 h2 {
   text-align: center;
@@ -14,7 +14,7 @@ h2 {
       font-size: 28px;
     margin: 30px 0;
   }
-}
+} /* Heading 2 */
 
 form {
   padding: 0 10%;
@@ -39,7 +39,7 @@ form {
         text-shadow: 0px 2px 1px #2b2d30;
         font-family: 'Quicksand', sans-serif;
 
-      }
+      } /* Label */
       input,
       textarea {
         width: 100%;
@@ -61,15 +61,15 @@ form {
     padding-left: 20px;
     padding-right: 20px;
     margin-bottom: 5px;
-      }
+      } /* Input and Textarea */
       textarea {
         height: 122px;
         padding: 15px 10px;
         resize: none;
-      }
+      } /* Textarea */
       padding:3px;
-    }
-  }
+    } /* Input Container */
+  } /* Section 1 */
   .send-container {
     float: left;
     width: 100%;
@@ -89,9 +89,9 @@ form {
       text-transform: uppercase;
       &:hover {
         background: #ff8900;
-      }
-    }
-  }
+      } /* Input Hover */
+    } /* Input */
+  } /* Send Container */
   &:after {
     content: "";
     display: block;
@@ -99,7 +99,7 @@ form {
   }
   @media(max-width:992px) {
     padding: 0 5%;
-  }
+  } /* Form */
   @media(max-width:768px) {
     margin-bottom:50px;
     section1 {
@@ -107,14 +107,14 @@ form {
       margin: 0;
       &.left {
         margin-bottom: 100%;
-      }
+      } /* Left */
     }
     .send-container {
       margin-left: 10px;
       margin-top:15px;
       input{
         width:100%;
-      }
-    }
-  }
-}
+      } /* Input */
+    } /* Send Container */
+  } /* Media Query */
+} /* Form */

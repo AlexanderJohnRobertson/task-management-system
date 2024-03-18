@@ -1,13 +1,14 @@
+<!-- HTML source code for Block User page -->
 <head>
-  <link rel="stylesheet" href="/static/formstyle.css  ">
+  <link rel="stylesheet" href="/static/formstyle.css"> <!-- Link to the CSS file to style the form -->
 </head>
-{% extends 'base4.html' %}
+{% extends 'base4.html' %} <!-- Extends the base4.html file to inherit the header and footer -->
 
-{% block content %}
+{% block content %} <!-- Block content to display the form -->
 
-          <h1 class="heading1">{% block title %} Block User {% endblock %}</h1>
+          <h1 class="heading1">{% block title %} Block User {% endblock %}</h1> <!-- Title of the page -->
           <div class="wpcf7" id="wpcf7-f156-p143-o1 formwrap">
-    <form method="post" class="wpcf7-form" novalidate="novalidate">
+    <form method="post" class="wpcf7-form" novalidate="novalidate"> <!-- Form to block a user -->
         <div style="display: none;">
             <input type="hidden" name="_wpcf7" value="156">
             <input type="hidden" name="_wpcf7_version" value="3.7.2">
@@ -20,7 +21,7 @@
              <label class="text1">Username:</label>
              <input type="text" name="username" value="" size="40" class="textinput wpcf7-form-control wpcf7-text wpcf7-validates-as-required" aria-required="true" aria-invalid="false" placeholder="Enter username of user to be blocked.">
           </span>
-          <button type="submit" class="btn transparent">Block User</button>
+          <button type="submit" class="btn transparent">Block User</button> <!-- Button to submit the form -->
             <br>
             <br>
             <br>
@@ -32,4 +33,5 @@
 </div>
 
 
-{% endblock %}
+{% endblock %} <!-- End of block content -->
+```

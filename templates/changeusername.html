@@ -1,13 +1,14 @@
+<!-- HTML source code for Change Username page -->
 <head>
-  <link rel="stylesheet" href="/static/formstyle.css  ">
+  <link rel="stylesheet" href="/static/formstyle.css"> <!-- Link to the CSS file for styling the form -->
 </head>
-{% extends 'base4.html' %}
+{% extends 'base4.html' %} <!-- Extend from base4.html which is the HTML file for the responsive navbar once logged in -->
 
-{% block content %}
+{% block content %} <!-- Content block for the form -->
 
-          <h1 class="heading1">{% block title %} Change Username {% endblock %}</h1>
+          <h1 class="heading1">{% block title %} Change Username {% endblock %}</h1> <!-- Title for the form -->
           <div class="wpcf7" id="wpcf7-f156-p143-o1 formwrap">
-    <form method="post" class="wpcf7-form" novalidate="novalidate">
+    <form method="post" class="wpcf7-form" novalidate="novalidate"> <!-- Form to change the username -->
         <div style="display: none;">
             <input type="hidden" name="_wpcf7" value="156">
             <input type="hidden" name="_wpcf7_version" value="3.7.2">
@@ -32,7 +33,7 @@
              <label class="text1">Password:</label>
              <input type="password" name="password" value="" size="40" class="textinput wpcf7-form-control wpcf7-text wpcf7-validates-as-required" aria-required="true" aria-invalid="false" placeholder="Enter your password to authorise changes.">
           </span>
-          <button type="submit" class="btn transparent">Change Username</button>
+          <button type="submit" class="btn transparent">Change Username</button> <!-- Submit button to change the username -->
             <br>
             <br>
             <br>
@@ -44,4 +45,5 @@
 </div>
 
 
-{% endblock %}
+{% endblock %} <!-- End of content block -->
+```

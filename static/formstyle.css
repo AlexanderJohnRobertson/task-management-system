@@ -1,5 +1,7 @@
-@import url(https://fonts.googleapis.com/css?family=Source+Sans+Pro);
-body {
+/* This is the CSS for styling the responsive CRUD forms */
+/* Original CSS sourced from codepen.io and modified by S275931 to suit the application. https://codepen.io/andstudio/pen/eYNeMM */
+@import url(https://fonts.googleapis.com/css?family=Source+Sans+Pro); /* Import fonts */
+body { /* style for body */
 	  background: #3c3f3f;
   	-webkit-background-size: cover;
 	  -moz-background-size: cover;
@@ -8,7 +10,7 @@ body {
     padding-top: 0px;
 }
 
-h1 {
+h1 { /* style for h1 */
    color: #fff;
    text-shadow: 1px 1px 0 rgba(0,0,0,0.4);
    padding-top: 10px;
@@ -19,7 +21,7 @@ h1 {
    margin: 0px;
 }
 
-form {
+form { /* style for form */
     margin-left:auto;
     margin-right:auto;
     width: 965px;
@@ -34,7 +36,7 @@ form {
     overflow: scroll;
 }
 
-textarea{
+textarea{ /* style for textarea */
 	  background: rgba(0, 0, 0, 0.4);
     width: 894px;
     height: 110px;
@@ -56,7 +58,7 @@ textarea{
     overflow: hidden;
 }
 
-select {
+select { /* style for select */
     width: 960px;
     height: 48px;
     line-height: 1.5;
@@ -78,7 +80,7 @@ select {
     -moz-appearance: none;
 }
 
-.textinput, .emailinput {
+.textinput, .emailinput { /* style for textinput and emailinput */
     width: 894px;
     height: 48px;
     border: none;
@@ -97,21 +99,21 @@ select {
     margin-bottom: 5px;
 }
 
-input[type=submit] {
+input[type=submit] { /* style for submit button */
     cursor: pointer;
 }
 
-input.textinput {
+input.textinput { /* style for textinput */
 	  background: rgba(0, 0, 0, 0.4);
 	  padding-left: 45px;
 }
 
-input.emailinput {
+input.emailinput { /* style for emailinput */
 	  background: rgba(0, 0, 0, 0.4);
 	  padding-left: 45px;
 }
 
-input.message {
+input.message { /* style for message */
 	  background: rgba(0, 0, 0, 0.4);
 	  padding-left: 45px;
 }
@@ -119,23 +121,23 @@ input.message {
 select.indent {
 	  padding-left: 45px;
     cursor: pointer;
-}
+} /* style for select.indent */
 
-::-webkit-input-placeholder {
+::-webkit-input-placeholder { /* style for input placeholder */
 	  color: #fff;
 }
 
 :-moz-placeholder{
     color: #fff;
-}
+} /* style for input placeholder */
 
 ::-moz-placeholder {
     color: #fff;
-}
+}   /* style for input placeholder */
 
 :-ms-input-placeholder {
 	  color: #fff;
-}
+} /* style for input placeholder */
 
 input:focus, textarea:focus {
 	  background-color: rgba(0, 0, 0, 0.2);
@@ -143,7 +145,7 @@ input:focus, textarea:focus {
     -webkit-box-shadow: 0 0 5px 1px rgba(255,255,255,.5);
     box-shadow: 0 0 5px 1px rgba(255,255,255,.5);
 	  overflow: hidden;
-}
+} /* style for input and textarea focus */
 
 
 
@@ -156,7 +158,7 @@ input:focus, textarea:focus {
 	-webkit-transition: all 0.3s;
 	-moz-transition: all 0.3s;
 	transition: all 0.3s;
-}
+} /* style for flat */
 
 
 .flat:before {
@@ -167,7 +169,7 @@ input:focus, textarea:focus {
 	line-height: 3;
 	font-size: 140%;
 	width: 60px;
-}
+} /* style for flat:before */
 
 
 .flat {
@@ -176,21 +178,21 @@ input:focus, textarea:focus {
    overflow: hidden;
    margin-bottom: 20px;
    background: url(http://www.jordancundiff.com/wp-content/uploads/2014/03/icon-dropdown.png) no-repeat right;
-   }
+   } /* style for flat */
 
 @media only screen and ( min-width: 768px ) and ( max-width: 1035px ) {
   h1 { font-size: 80px; }
   form { width: 736px !important; }
     #wpcf7-f156-p143-o1\20 formwrap > form > p > span.wpcf7-form-control-wrap.Subject.flat > select, #wpcf7-f156-p143-o1\20 formwrap > form > p > span.wpcf7-form-control-wrap.Subject.flat { width: 731px !important; }
     .textinput, .emailinput, #wpcf7-f156-p143-o1\20 formwrap > form > p > span.wpcf7-form-control-wrap.description > textarea { width: 666px !important; }
-}
+} /* style for media query */
 
 @media only screen and ( max-width: 804px ) {
     h1 { font-size: 50px; }
   form { width: 450px !important; }
    #wpcf7-f156-p143-o1\20 formwrap > form > p > span.wpcf7-form-control-wrap.Subject.flat > select, #wpcf7-f156-p143-o1\20 formwrap > form > p > span.wpcf7-form-control-wrap.Subject.flat { width: 445px !important; }
     .textinput, .emailinput, #wpcf7-f156-p143-o1\20 formwrap > form > p > span.wpcf7-form-control-wrap.description > textarea { width: 380px !important; }
-}
+} /* style for media query */
 
 @media only screen and ( max-width: 517px ) {
      h1 { font-size: 30px; }
@@ -198,4 +200,4 @@ input:focus, textarea:focus {
   #wpcf7-f156-p143-o1\20 formwrap > form > p > span.wpcf7-form-control-wrap.Subject.flat > select, #wpcf7-f156-p143-o1\20 formwrap > form > p > span.wpcf7-form-control-wrap.Subject.flat { width: 290px !important; }
     .textinput, .emailinput, #wpcf7-f156-p143-o1\20 formwrap > form > p > span.wpcf7-form-control-wrap.description > textarea { width: 225px !important; }
   .btn { width: 110px; }
-}
+} /* style for media query */

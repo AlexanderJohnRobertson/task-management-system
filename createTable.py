@@ -1,4 +1,5 @@
 import sqlite3
+import smtplib
 
 conn = sqlite3.connect('database.db')
 conn.execute('CREATE TABLE users(username varchar(40) primary key not null, password varchar(40) not null, forename varchar(40) not null, surname varchar(40) not null, email varchar(50) not null, phone varchar(20) not null, userType varchar(20) not null)')
@@ -20,4 +21,4 @@ server.sendmail("robertsona97@hotmail.co.uk", "s275931@uos.ac.uk", "Hello, this 
 
 print("Email sent")
 
-Python.303
+#Python.303

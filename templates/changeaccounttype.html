@@ -1,13 +1,14 @@
+<!-- HTML source code for Change Account Type page -->
 <head>
-  <link rel="stylesheet" href="/static/formstyle.css  ">
+  <link rel="stylesheet" href="/static/formstyle.css"> <!-- Link to the CSS file to style the form -->
 </head>
-{% extends 'base4.html' %}
+{% extends 'base4.html' %} <!-- Extend from base4.html which is the HTML file for the responsive navbar once logged in -->
 
-{% block content %}
+{% block content %} <!-- Content block for the form -->
 
-          <h1 class="heading1">{% block title %} Change User Account Type {% endblock %}</h1>
+          <h1 class="heading1">{% block title %} Change User Account Type {% endblock %}</h1> <!-- Title for the form -->
           <div class="wpcf7" id="wpcf7-f156-p143-o1 formwrap">
-    <form method="post" class="wpcf7-form" novalidate="novalidate">
+    <form method="post" class="wpcf7-form" novalidate="novalidate"> <!-- Form method is post and novalidate is set to novalidate -->
         <div style="display: none;">
             <input type="hidden" name="_wpcf7" value="156">
             <input type="hidden" name="_wpcf7_version" value="3.7.2">
@@ -24,7 +25,7 @@
             <label class="text1">User Account Type:</label>
              <input type="text" name="accountType" value="" size="40" class="textinput wpcf7-form-control wpcf7-text wpcf7-validates-as-required" aria-required="true" aria-invalid="false" placeholder="Type Administrator or Standard (Case Sensitive).">
           </span>
-          <button type="submit" class="btn transparent">Change User Account Type</button>
+          <button type="submit" class="btn transparent">Change User Account Type</button> <!-- Submit button for the form -->
             <br>
             <br>
             <br>
@@ -36,4 +37,5 @@
 </div>
 
 
-{% endblock %}
+{% endblock %} <!-- End of content block -->
+```

@@ -1,14 +1,15 @@
+<!-- HTML source code for Delete Account page -->
 <head>
-  <link rel="stylesheet" href="/static/formstyle.css  ">
+  <link rel="stylesheet" href="/static/formstyle.css"> <!-- Link to the CSS file to style the form -->
 </head>
 {% extends 'base4.html' %}
 
-{% block content %}
+{% block content %} <!-- Extend from base4.html which is the HTML file for the responsive navbar once logged in -->
 
-          <h1 class="heading1">{% block title %} Delete Account {% endblock %}</h1>
-          <p class="access-denied"align="center">WARNING: This will be permanent.</p>
+          <h1 class="heading1">{% block title %} Delete Account {% endblock %}</h1> <!-- Title of the page -->
+          <p class="access-denied"align="center">WARNING: This will be permanent.</p> <!-- Warning message to the user that deleting account will be permanent -->
           <div class="wpcf7" id="wpcf7-f156-p143-o1 formwrap">
-    <form method="post" class="wpcf7-form" novalidate="novalidate">
+    <form method="post" class="wpcf7-form" novalidate="novalidate"> <!-- Form to delete account -->
         <div style="display: none;">
             <input type="hidden" name="_wpcf7" value="156">
             <input type="hidden" name="_wpcf7_version" value="3.7.2">
@@ -29,7 +30,7 @@
              <label class="text1">Confirm Password:</label>
              <input type="password" name="confirmPassword" value="" size="40" class="textinput wpcf7-form-control wpcf7-text wpcf7-validates-as-required" aria-required="true" aria-invalid="false" placeholder="Confirm password to delete account.">
           </span>
-          <button type="submit" class="btn transparent">Delete Account</button>
+          <button type="submit" class="btn transparent">Delete Account</button> <!-- Submit button to delete account -->
             <br>
             <br>
             <br>
@@ -41,4 +42,5 @@
 </div>
 
 
-{% endblock %}
+{% endblock %} <!-- End of the block -->
+```
