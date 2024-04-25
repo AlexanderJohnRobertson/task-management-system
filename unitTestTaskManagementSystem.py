@@ -30,7 +30,7 @@ class TestRoutes(unittest.TestCase):
     def test_update_task(self): # Test the update task route
         response = self.app.get('updatetask')
         self.assertEqual(response.status_code, 200)
-        self.assertIn(b'Access Denied', response.data)
+        self.assertIn(b'Abcdefg Denied', response.data)
 
     def test_delete_task(self): # Test the delete task route
         response = self.app.get('deletetask')
