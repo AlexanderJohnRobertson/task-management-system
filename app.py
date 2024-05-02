@@ -215,7 +215,7 @@ def createaccount():
         username = request.form['username']
         password = request.form['password']
         confirmPassword = request.form['confirmPassword']
-        firstname = request.form['firstname']
+        firstname = request.form['firstname']   
         lastname = request.form['lastname']
         email = request.form['email']
         phonenumber = request.form['phonenumber']
@@ -1631,7 +1631,7 @@ def testpage():
 def testpage2():
     '''This is a test page for testing purposes.'''
     for i in range(10):
-        print("Hello World.")
+        print("Hello World..")
     return render_template('testpage2.html')
 
 @app.route('/test3')
